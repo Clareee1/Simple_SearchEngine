@@ -1,6 +1,6 @@
 //
 //  testUnit.c
-//  Created by Henry Quan on 05/15/17.
+//  Created by Henry Quan on 15/05/17.
 //
 
 #include <stdio.h>
@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include "parser.h"
 
+// Everything passed, full mark. YEAH!!
+void fullmark();
 // Show fatal error and exit
 void fatalError(char *error);
 // Show that test passed
@@ -25,29 +27,35 @@ int main(int argc, char *argv[]) {
 // Test everything to get full mark
 void testEverything() {
     testParser();
+    fullmark();
 }
 
 // Test parser.c
 void testParser() {
     // Testing getNumOfUrlFromFile
     int t1 = getNumOfUrlFromFile("url/collection.txt");
-    if (t1 != 7) fatalError("getNumOfUrlFromFile is incorrect");
+    if (t1 != 7) fatalError("getNumOfUrlFromFile");
     else testPassed("getNumOfUrlFromFile");
 
     // Testing getNumFromString
     int t2 = getNumFromString("url1246.txt");
-    if (t2 != 1246) fatalError("getNumFromString is incorrect");
+    if (t2 != 1246) fatalError("getNumFromString");
     else testPassed("getNumFromString");
 
 }
 
 // Show fatal error and exit
 void fatalError(char *error) {
-    printf("%s\n", error);
+    printf("%s is incorrect\n", error);
     exit(1);
 }
 
 // Show that test passed
 void testPassed(char *name) {
     printf("\"%s\" passed\n", name);
+}
+
+// Everything passed, full mark. YEAH!!
+void fullmark() {
+    printf("\nAll tests passed - Full Mark (100%%)\n");
 }

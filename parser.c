@@ -1,6 +1,6 @@
 //
 //  parser.c
-//  Created by Henry Quan on 05/15/17.
+//  Created by Henry Quan on 15/05/17.
 //
 
 #include <stdio.h>
@@ -38,6 +38,7 @@ int getNumOfUrlFromFile(char *name) {
 int getNumFromString(char *name) {
     if (name == NULL) return -1;
     int num = 0;
+    // Assume all string has the format url123.txt
     if (sscanf(name, "url%d.txt", &num)) {
         return num;
     } return -1;
