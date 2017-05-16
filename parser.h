@@ -6,10 +6,10 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-/*// Get all links from a given webpage
-void getUrlFromFile(char *, Graph url);
-// Get all texts from a given webpage
-void getTxtFromFile(char *, BST keyword);*/
+// Get all linksn and texts from a given webpage
+void getUrlTxtFromFile(char *);
+// Get name of links from collection.txt
+int *getNameOfUrlFromFile(char *, int);
 // Get number of links from collection.txt
 int getNumOfUrlFromFile(char *);
 // Convert url23.txt to 23
