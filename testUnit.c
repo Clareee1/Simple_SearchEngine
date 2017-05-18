@@ -37,14 +37,10 @@ void testParser() {
     if (t1 != 7) fatalError("getNumOfUrlFromFile");
     else testPassed("getNumOfUrlFromFile");
 
-    // Testing getNumFromString part1
-    int t2 = getNumFromString("url888.txt");
-    if (t2 != 888) fatalError("getNumFromString part 1");
-    else testPassed("getNumFromString part 1");
-    // Testing getNumFromString part2
-    int t2_2 = getNumFromString("url888");
-    if (t2_2 != 888) fatalError("getNumFromString part 2");
-    else testPassed("getNumFromString part 2");
+    // Testing getNumFromString
+    int t2 = getNumFromString("url1246.txt");
+    if (t2 != 1246) fatalError("getNumFromString");
+    else testPassed("getNumFromString");
 
     // Testing getNameOfUrlFromFile
     int *t3 = getNameOfUrlFromFile("url/collection.txt", t1);
@@ -68,6 +64,7 @@ void testParser() {
     }
     testPassed("getUrlTxtFromFile");
 
+
 }
 
 // Show fatal error and exit
@@ -78,7 +75,7 @@ void fatalError(char *error) {
 
 // Show that test passed
 void testPassed(char *name) {
-    printf("\"%s\" passed\n\n", name);
+    printf("\"%s\" passed\n", name);
 }
 
 // Everything passed, full mark. YEAH!!
