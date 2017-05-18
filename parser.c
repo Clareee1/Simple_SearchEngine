@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "parser.h"
 
 // Create a string array
@@ -23,6 +24,18 @@ static char **newStringArray(int size) {
 
     return array;
 }
+
+// Convert a string to lower
+void strlower(char* str) {
+    if (str == NULL) return;
+    int len = strlen(str);
+    int i;
+    for (i = 0; i < len; i++) {
+        // Convert to lowercase if it is uppercase
+        if (isupper(str[i])) str[i] = tolower(str[i]);
+    }
+}
+
 // Get all links from a given webpage
 void getUrlTxtFromFile(char *name) {
     if (name == NULL) return;
@@ -55,7 +68,6 @@ void getUrlTxtFromFile(char *name) {
             int i;
             for (i = 0; i < space; i++) {
                 fscanf(fp, "\n %s ", buffer);
-                // TODO Remove comma
                 // End of section-1 and the start of section-2
                 if (strcmp(buffer, "Section-2") == 0 || strcmp(buffer, "#end") == 0) sectionCount++;
                 else if (strstr(buffer, "url")) {
@@ -64,6 +76,10 @@ void getUrlTxtFromFile(char *name) {
                     printf("url%d.txt\n", nameArray[urlCount]);
                     urlCount++;
                 } else if (sectionCount == 2) {
+                    // If it has a full stop at the end, remove it
+                    if (buffer[strlen(buffer) - 1] == '.') buffer[strlen(buffer) - 1] = '\0';
+                    // Convert it to lower cased
+                    strlower(buffer);
                     // This is a keyword
                     strcpy(textArray[i], buffer);
                     printf("%s ", textArray[i]);
