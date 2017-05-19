@@ -10,7 +10,7 @@
 #include "parser.h"
 
 // Create a string array
-static char **newStringArray(int size) {
+/*static char **newStringArray(int size) {
     if (size <= 0) return NULL;
 
     char **array = malloc(size * sizeof(char*));
@@ -23,7 +23,7 @@ static char **newStringArray(int size) {
     }
 
     return array;
-}
+}*/
 
 // Convert a string to lower
 void strlower(char* str) {
@@ -37,8 +37,8 @@ void strlower(char* str) {
 }
 
 // Get all links from a given webpage
-int getUrlTxtFromFile(char *name, char *nameArray, int *urlArray) {
-    if (name == NULL || nameArray == NULL || urlArray == NULL) return -1;
+int getUrlTxtFromFile(char *name, int *urlArray) {
+    if (name == NULL || urlArray == NULL) return -1;
 
     FILE *fp = fopen(name, "r");
     if (fp != NULL) {
@@ -60,7 +60,7 @@ int getUrlTxtFromFile(char *name, char *nameArray, int *urlArray) {
         // Scan all text
         char buffer[64];
         int sectionCount = 0;
-        int i;
+        int i, urlCount = 0;
         for (i = 0; i < space; i++) {
             fscanf(fp, "\n %s ", buffer);
             // End of section-1 and the start of section-2
@@ -76,11 +76,10 @@ int getUrlTxtFromFile(char *name, char *nameArray, int *urlArray) {
                 // Convert it to lower cased
                 strlower(buffer);
                 // This is a keyword
-                strcpy(nameArray[i], buffer);
-                // printf("%s ", nameArray[i]);
+                printf("%s ", buffer);
             } else if (sectionCount == 3) break; // Done
         }
-        printf("\n\n");
+        printf("\n");
         return url;
     }
     return -1;

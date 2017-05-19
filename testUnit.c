@@ -58,13 +58,24 @@ void testParser() {
     }
 
     // Testing getUrlTxtFromFile
+    int *urlArray = calloc(t1, sizeof(int));
+    if (urlArray == NULL) fatalError("Memory");
+
     int t4;
     for (t4 = 0; t4 < t1; t4++) {
         // Open all url txt
         char name[64];
         sprintf(name, "url/url%d.txt", t3[t4]);
         printf("url%d: \n", t3[t4]);
-        getUrlTxtFromFile(name);
+        int urlCount = getUrlTxtFromFile(name, urlArray);
+        printf("%d url%s in %s\n", urlCount, urlCount == 0 ? "" : "s", name);
+        int i;
+        for (i = 0; i < t1; i++) {
+            if (urlArray[i] == 0) continue;
+            printf("url%d.txt ", urlArray[i]);
+            urlArray[i] = 0;
+        }
+        printf("\n\n");
     }
     testPassed("getUrlTxtFromFile");
 
