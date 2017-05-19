@@ -7,7 +7,7 @@
 #define PARSER_H
 
 // Get all linksn and texts from a given webpage
-void getUrlTxtFromFile(char *);
+int getUrlTxtFromFile(char *, char *, int *);
 // Get name of links from collection.txt
 int *getNameOfUrlFromFile(char *, int);
 // Get number of links from collection.txt

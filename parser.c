@@ -37,8 +37,8 @@ void strlower(char* str) {
 }
 
 // Get all links from a given webpage
-void getUrlTxtFromFile(char *name) {
-    if (name == NULL) return;
+int getUrlTxtFromFile(char *name, char *nameArray, int *urlArray) {
+    if (name == NULL || nameArray == NULL || urlArray == NULL) return -1;
 
     FILE *fp = fopen(name, "r");
     if (fp != NULL) {
@@ -57,37 +57,33 @@ void getUrlTxtFromFile(char *name) {
         // reset fp to start
         rewind(fp);
 
-        char **textArray = newStringArray(space);
-        int *nameArray = calloc(url, sizeof(int));
-        int urlCount = 0;
-        if (nameArray == NULL) exit(1);
-        if (textArray != NULL) {
-            // Scan all text
-            char buffer[64];
-            int sectionCount = 0;
-            int i;
-            for (i = 0; i < space; i++) {
-                fscanf(fp, "\n %s ", buffer);
-                // End of section-1 and the start of section-2
-                if (strcmp(buffer, "Section-2") == 0 || strcmp(buffer, "#end") == 0) sectionCount++;
-                else if (strstr(buffer, "url")) {
-                    // YEAH! A url
-                    nameArray[urlCount] = getNumFromString(buffer);
-                    printf("url%d.txt\n", nameArray[urlCount]);
-                    urlCount++;
-                } else if (sectionCount == 2) {
-                    // If it has a full stop at the end, remove it
-                    if (buffer[strlen(buffer) - 1] == '.') buffer[strlen(buffer) - 1] = '\0';
-                    // Convert it to lower cased
-                    strlower(buffer);
-                    // This is a keyword
-                    strcpy(textArray[i], buffer);
-                    printf("%s ", textArray[i]);
-                } else if (sectionCount == 3) break; // Done
-            }
+        // Scan all text
+        char buffer[64];
+        int sectionCount = 0;
+        int i;
+        for (i = 0; i < space; i++) {
+            fscanf(fp, "\n %s ", buffer);
+            // End of section-1 and the start of section-2
+            if (strcmp(buffer, "Section-2") == 0 || strcmp(buffer, "#end") == 0) sectionCount++;
+            else if (strstr(buffer, "url")) {
+                // YEAH! A url
+                urlArray[urlCount] = getNumFromString(buffer);
+                // printf("url%d.txt\n", urlArray[urlCount]);
+                urlCount++;
+            } else if (sectionCount == 2) {
+                // If it has a full stop at the end, remove it
+                if (buffer[strlen(buffer) - 1] == '.') buffer[strlen(buffer) - 1] = '\0';
+                // Convert it to lower cased
+                strlower(buffer);
+                // This is a keyword
+                strcpy(nameArray[i], buffer);
+                // printf("%s ", nameArray[i]);
+            } else if (sectionCount == 3) break; // Done
         }
         printf("\n\n");
+        return url;
     }
+    return -1;
 }
 
 // Get name of links from collection.txt
