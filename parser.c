@@ -37,20 +37,18 @@ void strlower(char* str) {
 }
 
 // Get all links from a given webpage
-int getUrlTxtFromFile(char *name, int *urlArray) {
+int getUrlFromFile(char *name, int *urlArray) {
     if (name == NULL || urlArray == NULL) return -1;
 
     FILE *fp = fopen(name, "r");
     if (fp != NULL) {
         // Count the number of # and count the number of letter 'u'
         char c;
-        int hash = 0, url = 0, space = 0;
+        int hash = 0, url = 0;
         while ((c = fgetc(fp)) != EOF) {
             if (c == '#') hash++;
-            // Counting for url
-            if (hash < 2 && c == 'u') url++;
-            // Counting for space
-            if (hash < 4 && c == ' ') space++;
+            // Count for url
+            if (hash > 2 && c == 'u') url++;
             // Done
             if (hash == 4) break;
         }
@@ -61,7 +59,7 @@ int getUrlTxtFromFile(char *name, int *urlArray) {
         char buffer[64];
         int sectionCount = 0;
         int i, urlCount = 0;
-        for (i = 0; i < space; i++) {
+        for (i = 0; i < url; i++) {
             fscanf(fp, "\n %s ", buffer);
             // End of section-1 and the start of section-2
             if (strcmp(buffer, "Section-2") == 0 || strcmp(buffer, "#end") == 0) sectionCount++;
@@ -71,6 +69,45 @@ int getUrlTxtFromFile(char *name, int *urlArray) {
                 // printf("url%d.txt\n", urlArray[urlCount]);
                 urlCount++;
             } else if (sectionCount == 2) {
+                // End of urls
+                break;
+            }
+        }
+        // printf("\n");
+        return urlCount;
+    }
+    return -1;
+}
+
+// Get all links from a given webpage
+void getTxtFromFile(char *name) {
+    // TODO DONT FORGET THE TREE!!!!
+    if (name == NULL) return;
+
+    FILE *fp = fopen(name, "r");
+    if (fp != NULL) {
+        // Count the number of # and count for space
+        char c;
+        int hash = 0, space = 0;
+        while ((c = fgetc(fp)) != EOF) {
+            if (c == '#') hash++;
+            // Counting for space
+            if (hash >= 2 && hash < 4 && c == ' ') space++;
+            // Done
+            if (hash == 4) break;
+        }
+        // reset fp to start
+        rewind(fp);
+
+        // Scan all text
+        char buffer[64];
+        int sectionCount = 0;
+        int i;
+        for (i = 0; i < space; i++) {
+            fscanf(fp, "\n %s ", buffer);
+            // End of section-1 and the start of section-2
+            if (strcmp(buffer, "Section-2") == 0 || strcmp(buffer, "#end") == 0) sectionCount++;
+            else if (sectionCount == 2) {
                 // If it has a full stop at the end, remove it
                 if (buffer[strlen(buffer) - 1] == '.') buffer[strlen(buffer) - 1] = '\0';
                 // Convert it to lower cased
@@ -80,9 +117,7 @@ int getUrlTxtFromFile(char *name, int *urlArray) {
             } else if (sectionCount == 3) break; // Done
         }
         printf("\n");
-        return url;
     }
-    return -1;
 }
 
 // Get name of links from collection.txt

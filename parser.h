@@ -6,8 +6,11 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-// Get all linksn and texts from a given webpage
-int getUrlTxtFromFile(char *, int *);
+// Get all links from a given webpage (Part A)
+int getUrlFromFile(char *, int *);
+// Get all texts from a given webpage (Part B, C)
+// TODO getTxtFromFile(char *, Tree) -> Add binary tree
+void getTxtFromFile(char *);
 // Get name of links from collection.txt
 int *getNameOfUrlFromFile(char *, int);
 // Get number of links from collection.txt
