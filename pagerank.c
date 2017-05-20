@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "graph2.h"
+#include "graph.h"
 #include "parser.h"
 
 void initialiseArray(double* array, int size);
@@ -35,7 +35,7 @@ void pagerank(double d, double diffPR, int maxIterations){
 //A hell amount of initialising
     Graph g = createNewGraph();
     printf("Graph created\n");
-    
+
     int size = nVertices(g);  //Basically number of URLs
     int p = 0;
     int i, j;
@@ -73,7 +73,7 @@ void pagerank(double d, double diffPR, int maxIterations){
             printf("\n");
             //printf("successful in obtaining indexs %d\n", tempArray[0]);
             links = numberOfLinksTo(g, i);
-            //printf("Number of links to %d is %d\n", i, links); 
+            //printf("Number of links to %d is %d\n", i, links);
             //printf("links is %d\n", links);
             int links2 = 0;
             for (j = 0 ; j < links; j++){   // j is pj

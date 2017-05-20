@@ -165,6 +165,7 @@ int getNumOfKeywordFromFile(char *name) {
     if (name == NULL) return -1;
 
     FILE *fp = fopen(name, "r");
+    printf("%p\n", fp);
     if (fp != NULL) {
         char buffer[64];
         int wordCount = 0;
@@ -173,6 +174,7 @@ int getNumOfKeywordFromFile(char *name) {
             // Try to get all keywords, ignore urls
             if (!strstr(buffer, "url")) wordCount++;
         }
+        printf("f:%d\n", wordCount);
         return wordCount;
     }
     fclose(fp);
