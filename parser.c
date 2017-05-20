@@ -10,22 +10,22 @@
 #include "parser.h"
 
 // Create a string array
-/*static char **newStringArray(int size) {
+static char **newStringArray(int size) {
     if (size <= 0) return NULL;
 
     char **array = malloc(size * sizeof(char*));
-    if (array == NULL) exit(1);
+    if (array == NULL) return NULL;
 
     int i;
     for (i = 0; i < size; i++) {
         array[i] = malloc(size * sizeof(char));
-        if (array[i] == NULL) exit(1);
+        if (array[i] == NULL) return NULL;
     }
 
     return array;
-}*/
+}
 
-// Convert a string to lower
+// Convert a string to lower (Henry)
 void strlower(char* str) {
     if (str == NULL) return;
     int len = strlen(str);
@@ -36,7 +36,7 @@ void strlower(char* str) {
     }
 }
 
-// Get all links from a given webpage
+// Get all links from a given webpage (Henry)
 int getUrlFromFile(char *name, int *urlArray) {
     if (name == NULL || urlArray == NULL) return -1;
 
@@ -79,7 +79,7 @@ int getUrlFromFile(char *name, int *urlArray) {
     return -1;
 }
 
-// Get all links from a given webpage
+// Get all links from a given webpage (Henry)
 void getTxtFromFile(char *name) {
     // TODO DONT FORGET THE TREE!!!!
     if (name == NULL) return;
@@ -120,7 +120,7 @@ void getTxtFromFile(char *name) {
     }
 }
 
-// Get name of links from collection.txt
+// Get name of links from collection.txt (Henry)
 int *getNameOfUrlFromFile(char *name, int num) {
     if (name == NULL || num <= 0) return NULL;
 
@@ -141,7 +141,7 @@ int *getNameOfUrlFromFile(char *name, int num) {
     return nameArray;
 }
 
-// Get number of links from collection.txt
+// Get number of links from collection.txt (Henry)
 int getNumOfUrlFromFile(char *name) {
     if (name == NULL) return -1;
 
@@ -160,7 +160,49 @@ int getNumOfUrlFromFile(char *name) {
     return numOfUrl;
 }
 
-// Convert url23.txt to 23
+// Get the number of keywords from invertedIndex.txt (Part 2) (Henry)
+int getNumOfKeywordFromFile(char *name) {
+    if (name == NULL) return -1;
+
+    FILE *fp = fopen(name, "r");
+    if (fp != NULL) {
+        char buffer[64];
+        int wordCount = 0;
+
+        while (fscanf(fp, "\n%s ", buffer) == 1) {
+            // Try to get all keywords, ignore urls
+            if (!strstr(buffer, "url")) wordCount++;
+        }
+        return wordCount;
+    }
+    fclose(fp);
+    return -1;
+}
+
+// Get an array of keywords from invertedIndex.txt (Part 2) (Henry)
+char **getKeywordFromFile(char *name, int size) {
+    if (name == NULL || size <= 0) return NULL;
+
+    FILE *fp = fopen(name, "r");
+    if (fp != NULL) {
+        char buffer[64];
+        int wordCount = 0;
+        char **keywords = newStringArray(size);
+        if (keywords == NULL) exit(1);
+
+        while (fscanf(fp, "\n%s ", buffer) == 1) {
+            // Try to get all keywords, ignore urls
+            if (!strstr(buffer, "url")) {
+                strcpy(keywords[wordCount++], buffer);
+            }
+        }
+        return keywords;
+    }
+    fclose(fp);
+    return NULL;
+}
+
+// Convert url23.txt to 23 (Henry)
 int getNumFromString(char *name) {
     if (name == NULL) return -1;
 
