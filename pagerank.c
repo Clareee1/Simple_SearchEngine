@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "graph2.h"
 #include "parser.h"
 
@@ -15,13 +16,14 @@ void pagerank(double d, double diffPR, int maxIterations);
 int main(int argc, char * argv[]){
 
     if( argc == 4 ){
-        double d, diffPR = 0;
+        double d = 0; 
+        double diffPR = 0;
         int maxIter = 0;
         //Get stuff
-        sscanf(argv[1], "%lf", &d);
+        sscanf(argv[1], "%lf", &d); 
         sscanf(argv[2], "%lf", &diffPR);
         sscanf(argv[3], "%d", &maxIter);
-        //Put into function
+        //Put into function 
         pagerank(d, diffPR, maxIter);
     }
     return 0;
@@ -29,8 +31,8 @@ int main(int argc, char * argv[]){
 }
 
 void pagerank(double d, double diffPR, int maxIterations){
-
 //A hell amount of initialising
+    double d2  = d;
     Graph g = createNewGraph();
     int size = nVertices(g);  //Basically number of URLs
     int p = 0;
@@ -56,11 +58,12 @@ void pagerank(double d, double diffPR, int maxIterations){
             linkedToGiven(g, i, tempArray);  //an array of urls that link to i
             linksIn = numberOfLinksTo(g, i);  //number of links to i
             for (j = 0 ; j < linksIn; j++){   // j is pj
-                linksFrom = numberOfLinksOut(g,j);  //get how many links go out of j
+                linksFrom = numberOfLinksOut(g,tempArray[j]);  //get how many links go out of j
                 sum = sum + prevPRArray[tempArray[j]]/linksFrom; 
             }
+            assert(sum < 1);
             //Get PageRank!!! Finally!!!
-            PR = (double)  (1-d)/size + (double) d*1.00000000*sum; 
+            PR = (double)  (1-d2)/size *1.0000+ (double) d2*1.00000000*sum; 
             currPRArray[i] = PR;  //update currArray
             sum = 0;
         }
@@ -89,6 +92,7 @@ void initialiseArray(double* array, int size){
     for (i = 0; i < size; i++){
         array[i] = (1/nsize) * 1.00000000;
     }
+    printf("array[0] is %.8f\n", array[0]); 
 }
 
 double abs2(double num){
