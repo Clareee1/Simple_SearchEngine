@@ -11,8 +11,8 @@
 
 int main (int argc, char * argv[]) {
 	if (argc == 1) {
-		int * urlArray = getNameOfUrlFromFile ("collection.txt");
 		int numUrl = getNumOfUrlFromFile ("collection.txt");
+		int * urlArray = getNameOfUrlFromFile ("collection.txt", numUrl);
 		int i;
 		Tree bst = newTree();
 		for (i = 0; i < numUrl; i++) {
