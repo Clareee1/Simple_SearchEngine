@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include "parser.h"
 
-// Create a string array
+// Create a string array (Henry)
 static char **newStringArray(int size) {
     if (size <= 0) return NULL;
 
@@ -26,7 +26,7 @@ static char **newStringArray(int size) {
 }
 
 // Convert a string to lower (Henry)
-void strlower(char* str) {
+static void strlower(char* str) {
     if (str == NULL) return;
     int len = strlen(str);
     int i;
@@ -34,6 +34,14 @@ void strlower(char* str) {
         // Convert to lowercase if it is uppercase
         if (isupper(str[i])) str[i] = tolower(str[i]);
     }
+}
+
+// Normalise a string, return 0 for bad keyword (ignore it) (Henry)
+int normalise(char *keyword) {
+    if (keyword == NULL) return 0;
+    // Make it lower case
+    strlower(keyword);
+    return 1;
 }
 
 // Get all links from a given webpage (Henry)
@@ -80,8 +88,7 @@ int getUrlFromFile(char *name, int *urlArray) {
 }
 
 // Get all links from a given webpage (Henry)
-void getTxtFromFile(char *name) {
-    // TODO DONT FORGET THE TREE!!!!
+void getTxtFromFile(char *name, Tree bst) {
     if (name == NULL) return;
 
     FILE *fp = fopen(name, "r");
@@ -107,16 +114,16 @@ void getTxtFromFile(char *name) {
             fscanf(fp, "\n %s ", buffer);
             // End of section-1 and the start of section-2
             if (strcmp(buffer, "Section-2") == 0 || strcmp(buffer, "#end") == 0) sectionCount++;
-            else if (sectionCount == 2) {
+            else if (sectionCount == 2) { // This is a keyword
                 // If it has a full stop at the end, remove it
                 if (buffer[strlen(buffer) - 1] == '.') buffer[strlen(buffer) - 1] = '\0';
                 // Convert it to lower cased
                 strlower(buffer);
-                // This is a keyword
-                printf("%s ", buffer);
+                // Add it to Binary Tree (Alina)
+                int url = getNumFromString(name);
+                TreeFindAndInsert(bst, buffer, url);
             } else if (sectionCount == 3) break; // Done
         }
-        printf("\n");
     }
 }
 
@@ -209,8 +216,9 @@ int getNumFromString(char *name) {
     if (name == NULL) return -1;
 
     int num = 0;
-    // Assume all string has the format url123.txt / url123
-    if (sscanf(name, "url%d.txt", &num)) return num;
-    else if (sscanf(name, "url%d", &num)) return num;
+    // Get  number from string
+    if (sscanf(name, "%*[^0123456789]%d%*[^0123456789]", &num) == 1) {
+        return num;
+    }
     return -1;
 }
