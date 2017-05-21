@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "../parser.h"
+#include "parser.h"
 
 // How to use this program
 void showUsage();
