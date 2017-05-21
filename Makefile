@@ -5,8 +5,10 @@ all:
 	$(CC) $(FLAGS) *.c -o test
 pagerank:
 	$(CC) $(FLAGS) parser.c graph.c pagerank.c -o pagerank
+inverted:
+	$(CC) $(FLAGS) parser.c BSTree.c IntList.c inverted.c -o inverted
 parser:
-	$(CC) $(FLAGS) parser.c testUnit.c -o parser
+	$(CC) $(FLAGS) parser.c BSTree.c IntList.c testUnit.c -o parser
 tdidf:
 	$(CC) $(FLAGS) parser.c Part2/searchTfIdf.c -o searchTfIdf
 	rm Part2/searchTfIdf.exe
@@ -14,4 +16,4 @@ tdidf:
 	cd Part2
 clean:
 	rm -f *.exe Part2/*.exe
-	rm -f test pagerank Part2/searchTfIdf
+	rm -f test pagerank inverted Part2/searchTfIdf
