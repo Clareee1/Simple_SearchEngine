@@ -1,160 +1,231 @@
-// BSTree.c ... implementation of binary search tree ADT
+// Tree.h ... implementation of binary search tree ADT
+// Written by John Shepherd, March 2013
+// Modified by Aldhytha Karina Sari, 21/05/2017
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
 #include "BSTree.h"
-#include "Queue.h"
+#include "IntList.h"
 
-typedef struct BSTNode *BSTLink;
+// Representation of Trees and Nodes
 
-typedef struct BSTNode {
-	int value;
-	BSTLink left, right;
-} BSTNode;
+typedef struct Node *Link;
 
-// make a new node containing a value
-static
-BSTLink newBSTNode(int v)
+typedef struct Node {
+	char* value;
+	IntList urlList;
+	Link left, right;
+	Tree within;  // which tree contains this Node
+} Node;
+
+typedef struct TreeRep {
+	Link root;
+} TreeRep;
+
+// Forward references for private functions
+
+//static void doShowTree(Link);
+static void drop(Link);
+static int cmpValue (char* it2, Link t);
+static void showBSTreeNode(FILE * fp, Link t);
+static void BSTreeInfix (FILE * fp, Link t);
+static Link InsertAVL(Link t, char* it);
+static Link newNode(char*);
+static Link search(Link,char*);
+static Link delete(Link,char*);
+static Link deleteRoot(Link);
+//static Link partition(Link, int);
+//static Link rebalance(Link);
+static Link rotateL(Link);
+static Link rotateR(Link);
+static int depth(Link);
+static int size(Link);
+
+// used to hold current tree during insertion
+
+Tree thisTree;
+
+// Helper: make a new node containing a value
+static Link newNode(char* v)
 {
-	BSTLink new = malloc(sizeof(BSTNode));
+	Link new = malloc(sizeof(Node));
 	assert(new != NULL);
-	new->value = v;
+	new->value = strdup(v);
 	new->left = new->right = NULL;
+	new->urlList = NULL;
+	new->within = thisTree;
 	return new;
 }
 
-// create a new empty BSTree
-BSTree newBSTree()
+// Interface: create a new empty Tree
+Tree newTree()
 {
-	return NULL;
+	TreeRep *new = malloc(sizeof(TreeRep));
+	assert(new != NULL);
+	new->root = NULL;
+	return new;
 }
 
-// free memory associated with BSTree
-void dropBSTree(BSTree t)
+// Interface: free memory associated with Tree
+void dropTree(Tree t)
 {
 	if (t == NULL) return;
-	dropBSTree(t->left);
-	dropBSTree(t->right);
+	drop(t->root);
 	free(t);
 }
 
-// display a BSTree
-void showBSTree(BSTree t)
+// Helper: recursive drop
+static void drop(Link t)
 {
-	void doShowBSTree(BSTree); // see later
-	doShowBSTree(t);
+	if (t == NULL) return;
+	drop(t->left);
+	drop(t->right);
+	free(t);
 }
 
 // display BSTree root node
-void showBSTreeNode(BSTree t)
+static void showBSTreeNode(FILE * fp, Link t)
 {
 	if (t == NULL) return;
-	printf("%d ", t->value);
+	fprintf(fp, "%s ", t->value);
+	showIntList(fp, t->urlList);
 }
 
-// print values in infix order
-void BSTreeInfix(BSTree t)
+static void BSTreeInfix (FILE * fp, Link t)
 {
 	if (t == NULL) return;
-	BSTreeInfix(t->left);
-	showBSTreeNode(t);
-	BSTreeInfix(t->right);
+	BSTreeInfix(fp, t->left);
+	showBSTreeNode(fp, t);
+	BSTreeInfix(fp, t->right);
 }
-
-// print values in prefix order
-void BSTreePrefix(BSTree t)
+// Interface: display a Tree
+void showTree(FILE * fp, Tree t)
 {
-	if (t == NULL) return;
-	showBSTreeNode(t);
-	BSTreePrefix(t->left);
-	BSTreePrefix(t->right);
+	BSTreeInfix (fp, t->root);
 }
 
-// print values in postfix order
-void BSTreePostfix(BSTree t)
+// Interface: depth of Tree (max path length)
+int TreeDepth(Tree t)
 {
-	if (t == NULL) return;
-	BSTreePostfix(t->left);
-	BSTreePostfix(t->right);
-	showBSTreeNode(t);
+	return depth(t->root);
 }
 
-// print values in level-order
-void BSTreeLevelOrder(BSTree t)
+// Helper: recursive depth calculation
+static int depth(Link t)
+{
+	if (t == NULL) return 0;
+	int ldepth = depth(t->left);
+	int rdepth = depth(t->right);
+	return 1 + ((ldepth > rdepth) ? ldepth : rdepth);
+}
+
+// Interface: count #nodes in Tree
+int TreeNumNodes(Tree t)
+{
+	return size(t->root);
+}
+
+// Helper: recursive node counter
+static int size(Link t)
+{
+	if (t == NULL) return 0;
+	return 1 + size(t->left) + size(t->right);
+}
+
+// Interface: insert a new value into a Tree
+// Interface: insert a new value into a Tree
+void TreeInsert(Tree t, char* it)
+{
+	thisTree = t;
+	t->root = InsertAVL(t->root, it);
+}
+
+static Link InsertAVL(Link t, char* it)
 {
 	if (t == NULL) {
-		return;
+		return newNode(it);
 	}
-	Queue q = newQueue ();
-	QueueJoin(q, t);
-	while (!QueueIsEmpty(q)) {
-		Item copy = QueueLeave(q);
-		printf("%d ",copy->value);
-		if (copy->left != NULL) {
-			QueueJoin(q, copy->left);
-		}
-		if (copy->right != NULL) {
-			QueueJoin(q, copy->right);
-		}
-	}
-	dropQueue (q);
-}
-
-// count #nodes in BSTree
-int BSTreeNumNodes(BSTree t)
-{
-	if (t == NULL)
-		return 0;
-	else
-		return 1 + BSTreeNumNodes(t->left)
-	             + BSTreeNumNodes(t->right);
-}
-
-// count #leaves in BSTree
-int BSTreeNumLeaves(BSTree t)
-{
-	if (t == NULL) {
-		return 0;
-	} else if (t->left == NULL && t->right == NULL) {
-		return 1;
-	} else {
-		return BSTreeNumLeaves(t->left) + BSTreeNumLeaves(t->right);
-	}
-}
-
-// insert a new value into a BSTree
-BSTree BSTreeInsert(BSTree t, int v)
-{
-	if (t == NULL)
-		return newBSTNode(v);
-	else if (v < t->value)
-		t->left = BSTreeInsert(t->left, v);
-	else if (v > t->value)
-		t->right = BSTreeInsert(t->right, v);
-	else // (v == t->value)
-		/* don't insert duplicates */;
+	int diff = cmpValue(it, t);
+	if (diff == 0)
+		t->value = it;
+	else if (diff < 0)
+		t->left = InsertAVL(t->left, it);
+	else if (diff > 0)
+		t->right = InsertAVL(t->right, it);
+	int dL = depth(t->left);
+	int dR = depth(t->right);
+	if ((dL - dR) > 1) t = rotateR(t);
+	else if ((dR - dL) > 1) t = rotateL(t);
+	//printf("After inserting %d, tree is:\n",key(it));
+	//showTree(t);
 	return t;
 }
 
-// check whether a value is in a BSTree
-int BSTreeFind(BSTree t, int v)
-{
-	if (t == NULL)
-		return 0;
-	else if (v < t->value)
-		return BSTreeFind(t->left, v);
-	else if (v > t->value)
-		return BSTreeFind(t->right, v);
-	else // (v == t->value)
-		return 1;
+// Helpers: various styles of insert
+static int cmpValue (char* keyword, Link t) {
+   if (strcmp (keyword, t->value) == 0) {
+      return 0;
+   } else if (strcmp (keyword, t->value) < 0) {
+      return -1;
+   } else {
+      return 1;
+   }
 }
 
-// delete root of tree
-static
-BSTree deleteRoot(BSTree t)
+// Interface: check whether a value is in a Tree
+void TreeFindAndInsert(Tree t, char* keyword, int url)
 {
+	Link res;
+	res = search(t->root, keyword);
+	if (res == NULL) {
+		TreeInsert(t, keyword);
+		res = search(t->root, keyword);
+		res->urlList = newIntList();
+	}
+	IntListInsert(res->urlList, url);
+}
+
+// Helpers: search functions to return Node containing key
+static Link search(Link t, char* keyword)
+{
+	if (t == NULL) return NULL;
+	Link res = NULL;
+	int diff = cmpValue(keyword, t);
+	if (diff == 0)
+		res = t;
+	else if (diff < 0)
+		res = search(t->left, keyword);
+	else if (diff > 0)
+		res = search(t->right, keyword);
+	return res;
+}
+
+// Interface: delete a value from a Tree
+void TreeDelete(Tree t, char* keyword)
+{
+	t->root = delete(t->root, keyword);
+}
+
+// Helper: recursive delete
+static Link delete(Link t, char* keyword)
+{
+	if (t == NULL) return NULL;
+	int diff = cmpValue(keyword, t);
+	if (diff == 0)
+		t = deleteRoot(t);
+	else if (diff < 0)
+		t->left = delete(t->left, keyword);
+	else if (diff > 0)
+		t->right =  delete(t->right, keyword);
+	return t;
+}
+
+// Helper: delete root of tree
+static Link deleteRoot(Link t)
+{
+	Link newRoot;
 	// if no subtrees, tree empty after delete
 	if (t->left == NULL && t->right == NULL) {
 		free(t);
@@ -162,48 +233,82 @@ BSTree deleteRoot(BSTree t)
 	}
 	// if only right subtree, make it the new root
 	else if (t->left == NULL && t->right != NULL) {
+		newRoot = t->right;
 		free(t);
-		return t->right;
+		return newRoot;
 	}
 	// if only left subtree, make it the new root
 	else if (t->left != NULL && t->right == NULL) {
+		newRoot = t->left;
 		free(t);
-		return t->left;
+		return newRoot;
 	}
 	// else (t->left != NULL && t->right != NULL)
 	// so has two subtrees
-	// - find inorder successor
-	// - move its value to root
+	// - find inorder successor (grab value)
 	// - delete inorder successor node
-	BSTLink parent = t;
-	BSTLink succ = t->right; // not null!
+	// - move its value to root
+	Link succ = t->right; // not null!
 	while (succ->left != NULL) {
-		parent = succ;
 		succ = succ->left;
 	}
-	t->value = succ->value;
-	free(succ);
-	if (parent == t)
-		parent->right = NULL;
-	else
-		parent->left = NULL;
+	char* succVal = strdup(succ->value);
+	t = delete(t,succVal);
+	t->value = strdup(succVal);
 	return t;
 }
 
-// delete a value from a BSTree
-BSTree BSTreeDelete(BSTree t, int v)
+// Helper: rotate tree right around root
+Link rotateR(Link n1)
 {
-	if (t == NULL)
-		return NULL;
-	else if (v < t->value)
-		t->left = BSTreeDelete(t->left, v);
-	else if (v > t->value)
-		t->right = BSTreeDelete(t->right, v);
-	else // (v == t->value)
-		t = deleteRoot(t);
-	return t;
+	if (n1 == NULL) return NULL;
+	Link n2 = n1->left;
+	if (n2 == NULL) return n1;
+	n1->left = n2->right;
+	n2->right = n1;
+	return n2;
 }
 
+// Helper: rotate tree left around root
+Link rotateL(Link n2)
+{
+	if (n2 == NULL) return NULL;
+	Link n1 = n2->right;
+	if (n1 == NULL) return n2;
+	n2->right = n1->left;
+	n1->left = n2;
+	return n1;
+}
+/*
+// Helper: rebalance tree by moving median to root
+static Link rebalance(Link t)
+{
+	if (t == NULL) return NULL;
+    if (size(t) < 2) return t;
+    // put node with median key at root
+    t = partition(t, size(t)/2);
+    // then rebalance each subtree
+    t->left = rebalance(t->left);
+    t->right = rebalance(t->right);
+    return t;
+}
+
+static Link partition(Link t, int i)
+{
+   if (t == NULL) return NULL;
+   assert(0 <= i && i < size(t));
+   int n = size(t->left);
+   if (i < n) {
+      t->left = partition(t->left, i);
+      t = rotateR(t);
+   }
+   if (i > n) {
+      t->right = partition(t->right, i-n-1);
+      t = rotateL(t);
+   }
+   return t;
+}
+*/
 // ASCII tree printer
 // Courtesy: ponnada
 // Via: http://www.openasthra.com/c-tidbits/printing-binary-trees-in-ascii/
@@ -223,15 +328,16 @@ struct asciinode_struct
 	char label[11];
 };
 
+/*
 // functions
 void print_level(asciinode *node, int x, int level);
 void compute_edge_lengths(asciinode *node);
 void compute_lprofile(asciinode *node, int x, int y);
 void compute_rprofile(asciinode *node, int x, int y);
-asciinode *build_ascii_tree(BSTree t);
+asciinode *build_ascii_tree(Link t);
 void free_ascii_tree(asciinode *node);
 
-#define MAX_HEIGHT 1000
+#define MAX_HEIGHT 10000
 int lprofile[MAX_HEIGHT];
 int rprofile[MAX_HEIGHT];
 #define INFINITY (1<<20)
@@ -246,7 +352,7 @@ int gap = 3;  // gap between left and right nodes
 int print_next;    
 
 //prints ascii tree for given Tree structure
-void doShowBSTree(BSTree t)
+static void doShowTree(Link t)
 {
 	asciinode *proot;
 	int xmin, i;
@@ -272,7 +378,7 @@ void doShowBSTree(BSTree t)
 }
 
 //This function prints the given level of the given tree, assuming
-//that the node has the given x cordinate.
+//that the node has the given x coordinate.
 void print_level(asciinode *node, int x, int level)
 {
 	int i, isleft;
@@ -329,9 +435,9 @@ void compute_edge_lengths(asciinode *node)
 	if (node == NULL) return;
 	compute_edge_lengths(node->left);
 	compute_edge_lengths(node->right);
-
+*/
 	/* first fill in the edge_length of node */
-	if (node->right == NULL && node->left == NULL)
+/*	if (node->right == NULL && node->left == NULL)
 		node->edge_length = 0;
 	else
 	{
@@ -375,7 +481,7 @@ void compute_edge_lengths(asciinode *node)
 	node->height = h;
 }
 
-asciinode *build_ascii_tree_recursive(BSTree t)
+asciinode *build_ascii_tree_recursive(Link t)
 {
 	asciinode * node;
 
@@ -385,14 +491,14 @@ asciinode *build_ascii_tree_recursive(BSTree t)
 	node->right = build_ascii_tree_recursive(t->right);
 	if (node->left != NULL) node->left->parent_dir = -1;
 	if (node->right != NULL) node->right->parent_dir = 1;
-	sprintf(node->label, "%d", t->value);
+	sprintf(node->label, "%s", t->value);
 	node->lablen = strlen(node->label);;
 	return node;
 }
 
 
 //Copy the tree into the ascii node structre
-asciinode *build_ascii_tree(BSTree t)
+asciinode *build_ascii_tree(Link t)
 {
 	asciinode *node;
 	if (t == NULL) return NULL;
@@ -441,3 +547,4 @@ void compute_rprofile(asciinode *node, int x, int y)
 	compute_rprofile(node->left, x-node->edge_length-1, y+node->edge_length+1);
 	compute_rprofile(node->right, x+node->edge_length+1, y+node->edge_length+1);
 }
+*/
