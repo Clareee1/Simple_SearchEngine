@@ -13,4 +13,5 @@ tdidf:
 	mv searchTfIdf.exe Part2/searchTfIdf.exe
 	cd Part2
 clean:
-	rm -f *.exe
+	rm -f *.exe Part2/*.exe
+	rm -f test pagerank Part2/searchTfIdf
