@@ -4,14 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "graph2.h"
+#include "graph.h"
 #include "parser.h"
 
 void initialiseArray(double* array, int size);
 double abs2(double num);
-void sortArray(double* PRarray, int size, int* array);
+void merge(int* array, int lo, int mid, int hi, double* PRarray);
+void mergesort(int* array, int lo, int hi, double* PRarray);
 void printPRFunction(double* PRarray, Graph g, int size, int* sortedArray);
 void pagerank(double d, double diffPR, int maxIterations);
+int less(double num1, double num2);
 
 int main(int argc, char * argv[]){
 
@@ -81,10 +83,11 @@ void pagerank(double d, double diffPR, int maxIterations){
         sorted[i] = i;
     }
 
-    sortArray(currPRArray, size, sorted);
+    mergesort(sorted, 0, size-1, currPRArray);
     printPRFunction(currPRArray, g, size, sorted);
     disposeGraph(g);
 }
+
 
 void initialiseArray(double* array, int size){
     int i;
@@ -92,7 +95,6 @@ void initialiseArray(double* array, int size){
     for (i = 0; i < size; i++){
         array[i] = (1/nsize) * 1.00000000;
     }
-    printf("array[0] is %.8f\n", array[0]); 
 }
 
 double abs2(double num){
@@ -106,21 +108,91 @@ double abs2(double num){
 }
 
 //Not Done
-void sortArray(double* PRarray, int size, int* array){
-    //some sort function
-    //hopefully quicksort
+
+void mergesort(int* array, int lo, int hi, double* PRarray){
+
+    if(hi <= lo) return;
+    int mid = (lo + hi)/2;
+    mergesort(array, lo, mid, PRarray);
+    mergesort(array, mid+1, hi, PRarray);
+    merge(array, lo, mid, hi, PRarray);
+
 }
+
+void merge(int* array, int lo, int mid, int hi, double* PRarray){
+
+    int i, j, k, nitems = hi-lo+1;
+    double* tmp = malloc(nitems*sizeof(double));
+    int* tmp2 = malloc(nitems*sizeof(int));
+
+    i = lo; j = mid + 1; k = 0;
+    while( i <= mid && j <= hi){
+        if(PRarray[i] > PRarray[j]){ 
+            tmp[k] = PRarray[i]*1.00000;
+            tmp2[k] = array[i];
+            k++;
+            i++;
+        } else { 
+            tmp[k] = PRarray[j] * 1.00000;
+            tmp2[k] = array[j];
+            k++;
+            j++;
+        }
+
+    }
+
+    while (i <= mid){
+        tmp[k] = PRarray[i];
+        tmp2[k] = array[i];
+        i++;
+        k++;
+
+    }
+
+    while (j <= hi){
+        tmp[k] = PRarray[j];
+        tmp2[k] = array[j];
+        k++;
+        j++;
+    }
+
+
+    for(i = lo, k = 0; i <= hi; i++, k++){
+        array[i] = tmp2[k];
+        PRarray[i] = tmp[k];
+    }
+    free(tmp2);
+    free(tmp);
+
+}
+
+int less(double num1, double num2){
+    
+    if(num1 < num2){
+        return 1;
+    } else {
+        return 0;
+    }
+
+}
+
+
+
+
 
 //Print function
 void printPRFunction(double* PRarray, Graph g, int size, int* sortedArray){
     int i;
     int url = 0;
+    FILE *fp;
+    fp = fopen("pagerank.txt", "w");
     for (i = 0; i < size; i++){
         url = urlGivenIndex(sortedArray[i], g);
-        printf("url");
-        printf("%d, ", url);
-        printf("%d, ", numberOfLinksTo(g, sortedArray[i]));
-        printf("%.8f\n", PRarray[sortedArray[i]]);
+        fprintf(fp, "url");
+        fprintf(fp, "%d, ", url);
+        fprintf(fp, "%d, ", numberOfLinksOut(g, sortedArray[i]));
+        fprintf(fp, "%.7f\n", PRarray[i]);
     }
+    fclose(fp);
 }
 
