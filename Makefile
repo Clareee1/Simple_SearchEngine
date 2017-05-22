@@ -9,6 +9,8 @@ inverted:
 	$(CC) $(FLAGS) parser.c BSTree.c IntList.c inverted.c -o inverted
 parser:
 	$(CC) $(FLAGS) parser.c BSTree.c IntList.c testUnit.c -o parser
+pagerank:
+	$(CC) $(FLAGS) parser.c graph.c pagerank.c BSTree.c IntList.c -o pagerank
 tdidf:
 	$(CC) $(FLAGS) parser.c Part2/searchTfIdf.c -o searchTfIdf
 	rm Part2/searchTfIdf.exe
