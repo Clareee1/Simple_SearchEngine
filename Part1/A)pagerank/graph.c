@@ -15,7 +15,7 @@ typedef struct  vNode *vlist;
 struct vNode {
     int numLinksToIt;     //Stores number of links to url
     int numLinksOut;      //Stores number of links that url goes to
-    int* linksToIt;       //An array of links that goes to url
+    int* linksToIt;   //An array of links that goes to url
 };
 
 //The Graph...
@@ -44,6 +44,7 @@ Graph createNewGraph(){
   	int i, j;
   	new->nV = size;
   	new->indexArray = index;
+    printf("index is %d\n", index[0]);
 
     //Make space for edges (the actual graph)
   	new->edges = malloc((size) * sizeof(int *));
@@ -170,6 +171,7 @@ int numberOfLinksTo(Graph g, int url){
 int numberOfLinksOut(Graph g, int url){
     return g -> lledges[url] -> numLinksOut;
 }
+
 
 //Add index to the node...
 void addTovList(vlist node, int from, int size){

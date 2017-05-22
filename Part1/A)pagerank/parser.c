@@ -9,22 +9,6 @@
 #include <ctype.h>
 #include "parser.h"
 
-// Create a string array (Henry)
-static char **newStringArray(int size) {
-    if (size <= 0) return NULL;
-
-    char **array = malloc(size * sizeof(char*));
-    if (array == NULL) return NULL;
-
-    int i;
-    for (i = 0; i < size; i++) {
-        array[i] = malloc(size * sizeof(char));
-        if (array[i] == NULL) return NULL;
-    }
-
-    return array;
-}
-
 // Convert a string to lower (Henry)
 static void strlower(char* str) {
     if (str == NULL) return;
@@ -50,27 +34,13 @@ int getUrlFromFile(char *name, int *urlArray) {
 
     FILE *fp = fopen(name, "r");
     if (fp != NULL) {
-        // Count the number of # and count the number of letter 'u'
-        char c;
-        int hash = 0, url = 0;
-        while ((c = fgetc(fp)) != EOF) {
-            if (c == '#') hash++;
-            // Count for url
-            if (hash > 2 && c == 'u') url++;
-            // Done
-            if (hash == 4) break;
-        }
-        // reset fp to start
-        rewind(fp);
-
         // Scan all text
         char buffer[64];
         int sectionCount = 0;
-        int i, urlCount = 0;
-        for (i = 0; i < url; i++) {
-            fscanf(fp, "\n %s ", buffer);
+        int urlCount = 0;
+        while (fscanf(fp, "\n %s ", buffer) == 1) {
             // End of section-1 and the start of section-2
-            if (strcmp(buffer, "Section-2") == 0 || strcmp(buffer, "#end") == 0) sectionCount++;
+            if (strcmp(buffer, "Section-1") == 0 || strcmp(buffer, "#end") == 0) sectionCount++;
             else if (strstr(buffer, "url")) {
                 // YEAH! A url
                 urlArray[urlCount] = getNumFromString(buffer);
@@ -93,25 +63,10 @@ void getTxtFromFile(char *name, Tree bst) {
 
     FILE *fp = fopen(name, "r");
     if (fp != NULL) {
-        // Count the number of # and count for space
-        char c;
-        int hash = 0, space = 0;
-        while ((c = fgetc(fp)) != EOF) {
-            if (c == '#') hash++;
-            // Counting for space
-            if (hash >= 2 && hash < 4 && c == ' ') space++;
-            // Done
-            if (hash == 4) break;
-        }
-        // reset fp to start
-        rewind(fp);
-
         // Scan all text
         char buffer[64];
         int sectionCount = 0;
-        int i;
-        for (i = 0; i < space; i++) {
-            fscanf(fp, "\n %s ", buffer);
+        while (fscanf(fp, "\n %s ", buffer) == 1) {
             // End of section-1 and the start of section-2
             if (strcmp(buffer, "Section-2") == 0 || strcmp(buffer, "#end") == 0) sectionCount++;
             else if (sectionCount == 2) { // This is a keyword
@@ -172,7 +127,6 @@ int getNumOfKeywordFromFile(char *name) {
     if (name == NULL) return -1;
 
     FILE *fp = fopen(name, "r");
-    printf("%p\n", fp);
     if (fp != NULL) {
         char buffer[64];
         int wordCount = 0;
@@ -188,26 +142,46 @@ int getNumOfKeywordFromFile(char *name) {
     return -1;
 }
 
-// Get an array of keywords from invertedIndex.txt (Part 2) (Henry)
-char **getKeywordFromFile(char *name, int size) {
-    if (name == NULL || size <= 0) return NULL;
+// Check if there is such keywords from invertedIndex.txt (Part 2) (Henry)
+int hasKeyword(char *name, char *keyword) {
+    if (name == NULL) return -1;
+
+    FILE *fp = fopen(name, "r");
+    int hasWord = 0;
+    char buffer[64];
+    if (fp != NULL) {
+        while (fscanf(fp, keyword, buffer) == 1) {
+            hasWord = 1;
+            break;
+        }
+    }
+    return hasWord;
+}
+
+// Get the number of links after a keyword from invertedIndex.txt (Part 2) (Henry)
+int getNumOfUrlForKeywordFromFile(char *name, char *keyword) {
+    if (name == NULL) return -1;
 
     FILE *fp = fopen(name, "r");
     if (fp != NULL) {
         char buffer[64];
-        int wordCount = 0;
-        char **keywords = newStringArray(size);
-        if (keywords == NULL) exit(1);
+        while (fscanf(fp, keyword, buffer) == 1) {
+            while (fscanf(fp, "url%[^0123456789]", buffer) == 1) {
 
-        while (fscanf(fp, "\n%s ", buffer) == 1) {
-            // Try to get all keywords, ignore urls
-            if (!strstr(buffer, "url")) {
-                strcpy(keywords[wordCount++], buffer);
             }
         }
-        return keywords;
     }
-    fclose(fp);
+    return -1;
+}
+
+// Get all links after a keyword from invertedIndex.txt (Part 2) (Henry)
+int *getUrlOfKeywordFromFile(char *name, char *keyword) {
+    if (name == NULL) return NULL;
+
+    FILE *fp = fopen(name, "r");
+    if (fp != NULL) {
+
+    }
     return NULL;
 }
 

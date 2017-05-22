@@ -18,14 +18,14 @@ int less(double num1, double num2);
 int main(int argc, char * argv[]){
 
     if( argc == 4 ){
-        double d = 0; 
+        double d = 0;
         double diffPR = 0;
         int maxIter = 0;
         //Get stuff
-        sscanf(argv[1], "%lf", &d); 
+        sscanf(argv[1], "%lf", &d);
         sscanf(argv[2], "%lf", &diffPR);
         sscanf(argv[3], "%d", &maxIter);
-        //Put into function 
+        //Put into function
         pagerank(d, diffPR, maxIter);
     }
     return 0;
@@ -46,7 +46,7 @@ void pagerank(double d, double diffPR, int maxIterations){
     double PR = 0;
     double sum = 0;
     double currPRArray[size]; //current pagerank
-    double prevPRArray[size]; //previous pagerank 
+    double prevPRArray[size]; //previous pagerank
     initialiseArray(prevPRArray, size); //put 1/size for each
 
     if(isGraphEmpty(g) == 0){
@@ -61,11 +61,11 @@ void pagerank(double d, double diffPR, int maxIterations){
             linksIn = numberOfLinksTo(g, i);  //number of links to i
             for (j = 0 ; j < linksIn; j++){   // j is pj
                 linksFrom = numberOfLinksOut(g,tempArray[j]);  //get how many links go out of j
-                sum = sum + prevPRArray[tempArray[j]]/linksFrom; 
+                sum = sum + prevPRArray[tempArray[j]]/linksFrom;
             }
             assert(sum < 1);
             //Get PageRank!!! Finally!!!
-            PR = (double)  (1-d2)/size *1.0000+ (double) d2*1.00000000*sum; 
+            PR = (double)  (1-d2)/size *1.0000+ (double) d2*1.00000000*sum;
             currPRArray[i] = PR;  //update currArray
             sum = 0;
         }
@@ -127,12 +127,12 @@ void merge(int* array, int lo, int mid, int hi, double* PRarray){
 
     i = lo; j = mid + 1; k = 0;
     while( i <= mid && j <= hi){
-        if(PRarray[i] > PRarray[j]){ 
+        if(PRarray[i] > PRarray[j]){
             tmp[k] = PRarray[i]*1.00000;
             tmp2[k] = array[i];
             k++;
             i++;
-        } else { 
+        } else {
             tmp[k] = PRarray[j] * 1.00000;
             tmp2[k] = array[j];
             k++;
@@ -167,7 +167,7 @@ void merge(int* array, int lo, int mid, int hi, double* PRarray){
 }
 
 int less(double num1, double num2){
-    
+
     if(num1 < num2){
         return 1;
     } else {
@@ -195,4 +195,3 @@ void printPRFunction(double* PRarray, Graph g, int size, int* sortedArray){
     }
     fclose(fp);
 }
-
