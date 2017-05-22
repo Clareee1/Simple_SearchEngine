@@ -1,4 +1,4 @@
-//graph2.h
+//graph.h
 //I  included comments  for the sake of my teammates >_<
 
 #ifndef GRAPH_H

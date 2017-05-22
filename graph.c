@@ -83,7 +83,7 @@ Graph createNewGraph(){
     for(i = 0; i < size; i++){
         //Gets url, its size and links
         sprintf(url, "url%d.txt", new -> indexArray[i]);
-        tsize = getUrlTxtFromFile(url, tarray);
+        tsize = getUrlFromFile(url, tarray);
         new -> lledges[i] -> numLinksOut = tsize;
 
         //Adds edge, and adds to node...
