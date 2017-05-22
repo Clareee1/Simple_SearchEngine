@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "graph2.h"
+#include "graph.h"
 #include "parser.h"
 
 //A node?
@@ -15,7 +15,7 @@ typedef struct  vNode *vlist;
 struct vNode {
     int numLinksToIt;     //Stores number of links to url
     int numLinksOut;      //Stores number of links that url goes to
-    int* linksToIt;       //An array of links that goes to url
+    int* linksToIt;   //An array of links that goes to url
 };
 
 //The Graph...
@@ -44,6 +44,7 @@ Graph createNewGraph(){
   	int i, j;
   	new->nV = size;
   	new->indexArray = index;
+    printf("index is %d\n", index[0]);
 
     //Make space for edges (the actual graph)
   	new->edges = malloc((size) * sizeof(int *));
@@ -82,7 +83,7 @@ Graph createNewGraph(){
     for(i = 0; i < size; i++){
         //Gets url, its size and links
         sprintf(url, "url%d.txt", new -> indexArray[i]);
-        tsize = getUrlFromFile(url, tarray);
+        tsize = getUrlTxtFromFile(url, tarray);
         new -> lledges[i] -> numLinksOut = tsize;
 
         //Adds edge, and adds to node...
@@ -170,6 +171,7 @@ int numberOfLinksTo(Graph g, int url){
 int numberOfLinksOut(Graph g, int url){
     return g -> lledges[url] -> numLinksOut;
 }
+
 
 //Add index to the node...
 void addTovList(vlist node, int from, int size){
