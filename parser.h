@@ -20,7 +20,11 @@ int getNumFromString(char *);
 
 // Get the number of keywords from invertedIndex.txt (Part 2) (Henry)
 int getNumOfKeywordFromFile(char *);
-// Get an array of keywords from invertedIndex.txt (Part 2) (Henry)
-char **getKeywordFromFile(char *, int);
+// Check if there is such keywords from invertedIndex.txt (Part 2) (Henry)
+int hasKeyword(char *, char *);
+// Get the number of links after a keyword from invertedIndex.txt (Part 2) (Henry)
+int getNumOfUrlForKeywordFromFile(char *, char *);
+// Get all links after a keyword from invertedIndex.txt (Part 2) (Henry)
+int *getUrlOfKeywordFromFile(char *, char *);
 
 #endif
