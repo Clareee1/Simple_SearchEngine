@@ -10,7 +10,7 @@
 #include "parser.h"
 
 // Convert a string to lower (Henry)
-static void strlower(char* str) {
+void strlower(char* str) {
     if (str == NULL) return;
     int len = strlen(str);
     int i;
@@ -18,14 +18,6 @@ static void strlower(char* str) {
         // Convert to lowercase if it is uppercase
         if (isupper(str[i])) str[i] = tolower(str[i]);
     }
-}
-
-// Normalise a string, return 0 for bad keyword (ignore it) (Henry)
-int normalise(char *keyword) {
-    if (keyword == NULL) return 0;
-    // Make it lower case
-    strlower(keyword);
-    return 1;
 }
 
 // Get all links from a given webpage (Henry)
@@ -58,7 +50,7 @@ int getUrlFromFile(char *name, int *urlArray) {
 }
 
 // Get all links from a given webpage (Henry)
-void getTxtFromFile(char *name, Tree bst) {
+/*void getTxtFromFile(char *name, Tree bst) {
     if (name == NULL) return;
 
     FILE *fp = fopen(name, "r");
@@ -80,7 +72,7 @@ void getTxtFromFile(char *name, Tree bst) {
             } else if (sectionCount == 3) break; // Done
         }
     }
-}
+}*/
 
 // Get name of links from collection.txt (Henry)
 int *getNameOfUrlFromFile(char *name, int num) {
@@ -111,78 +103,73 @@ int getNumOfUrlFromFile(char *name) {
     FILE *fp = fopen(name, "r");
     // Be able to open file
     if (fp != NULL) {
-        char c;
-        // Read until it reaches the end
-        while ((c = fgetc(fp)) != EOF) {
-            // Count the number of letter "u" from "url"
-            if (c == 'u') numOfUrl++;
+        char buffer[64];
+        while (fscanf(fp, "\n %s ", buffer) == 1) {
+            if (strstr(buffer, "url")) numOfUrl++;
         }
     }
     fclose(fp);
     return numOfUrl;
 }
 
-// Get the number of keywords from invertedIndex.txt (Part 2) (Henry)
+// Get the name of links for a keyword from invertedIndex.txt (Part 2) (Henry)
+int getNameOfUrlForKeywordFromFile(char *name, char *keyword, int *array) {
+    if (name == NULL) return -1;
+
+    FILE *fp = fopen(name, "r");
+    int count = 0;
+    if (fp != NULL) {
+        char buffer[512];
+        // Read line by line until keyword is reached
+        while (fgets(buffer, 1024, fp) != NULL) {
+            if (strstr(buffer, keyword)) {
+                char *url = strtok(buffer, " ");
+                while ((url = strtok(NULL, " "))) {
+                    if (strstr(url, "url")) {
+                        array[count] = getNumFromString(url);
+                        count++;
+                    }
+                }
+            }
+        }
+    }
+    fclose(fp);
+    return count;
+}
+
+// Get number of keywords from invertedIndex.txt (Part 2) (Henry)
 int getNumOfKeywordFromFile(char *name) {
     if (name == NULL) return -1;
 
     FILE *fp = fopen(name, "r");
+    int count = 0;
     if (fp != NULL) {
-        char buffer[64];
-        int wordCount = 0;
-
-        while (fscanf(fp, "\n%s ", buffer) == 1) {
-            // Try to get all keywords, ignore urls
-            if (!strstr(buffer, "url")) wordCount++;
+        char c;
+        // Read how many lines we have
+        while ((c = getc(fp)) != EOF) {
+            if (c == '\n') count++;
         }
-        printf("f:%d\n", wordCount);
-        return wordCount;
     }
     fclose(fp);
-    return -1;
+    return count;
 }
 
-// Check if there is such keywords from invertedIndex.txt (Part 2) (Henry)
-int hasKeyword(char *name, char *keyword) {
-    if (name == NULL) return -1;
+// Count how many times a keyword appeared in one url (Part 2) (Henry)
+int getKeywordCountFromUrl(char *name, char *keyword) {
+    if (name == NULL || keyword == NULL) return -1;
 
     FILE *fp = fopen(name, "r");
-    int hasWord = 0;
-    char buffer[64];
-    if (fp != NULL) {
-        while (fscanf(fp, keyword, buffer) == 1) {
-            hasWord = 1;
-            break;
-        }
-    }
-    return hasWord;
-}
-
-// Get the number of links after a keyword from invertedIndex.txt (Part 2) (Henry)
-int getNumOfUrlForKeywordFromFile(char *name, char *keyword) {
-    if (name == NULL) return -1;
-
-    FILE *fp = fopen(name, "r");
+    int count = 0;
     if (fp != NULL) {
         char buffer[64];
-        while (fscanf(fp, keyword, buffer) == 1) {
-            while (fscanf(fp, "url%[^0123456789]", buffer) == 1) {
-
-            }
+        while (fscanf(fp, "\n %s ", buffer) == 1) {
+            strlower(buffer);
+            // We found that word, YEAH!
+            if (strcmp(buffer, keyword) == 0) count++;
         }
     }
-    return -1;
-}
-
-// Get all links after a keyword from invertedIndex.txt (Part 2) (Henry)
-int *getUrlOfKeywordFromFile(char *name, char *keyword) {
-    if (name == NULL) return NULL;
-
-    FILE *fp = fopen(name, "r");
-    if (fp != NULL) {
-
-    }
-    return NULL;
+    fclose(fp);
+    return count;
 }
 
 // Convert url23.txt to 23 (Henry)
