@@ -121,7 +121,7 @@ int getNameOfUrlForKeywordFromFile(char *name, char *keyword, int *array) {
     if (fp != NULL) {
         char buffer[512];
         // Read line by line until keyword is reached
-        while (fgets(buffer, 1024, fp) != NULL) {
+        while (fgets(buffer, 511, fp) != NULL) {
             if (strstr(buffer, keyword)) {
                 char *url = strtok(buffer, " ");
                 while ((url = strtok(NULL, " "))) {
@@ -130,6 +130,7 @@ int getNameOfUrlForKeywordFromFile(char *name, char *keyword, int *array) {
                         count++;
                     }
                 }
+                break;
             }
         }
     }
@@ -166,6 +167,26 @@ int getKeywordCountFromUrl(char *name, char *keyword) {
             strlower(buffer);
             // We found that word, YEAH!
             if (strcmp(buffer, keyword) == 0) count++;
+        }
+    }
+    fclose(fp);
+    return count;
+}
+
+// Check if there is such keywords from invertedIndex.txt (Part 2) (Henry)
+int hasKeyword(char *name, char *keyword) {
+
+    FILE *fp = fopen(name, "r");
+    int count = 0;
+    if (fp != NULL) {
+        char buffer[64];
+        while (fscanf(fp, "\n %s ", buffer) == 1) {
+            strlower(buffer);
+            // We found that word, YEAH!
+            if (strcmp(buffer, keyword) == 0) {
+                count = 1;
+                break;
+            }
         }
     }
     fclose(fp);
