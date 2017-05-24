@@ -49,7 +49,6 @@ int main(int argc, char *argv[]) {
     int *tempArray = newIntArray(totalUrlCount);
     if (tempArray == NULL) fatalError("Out of memory");
 
-
     // Store the index for all urls
     int *urlArray = getNameOfUrlFromFile("collection.txt", totalUrlCount);
     if (urlArray == NULL) fatalError("Out of memory");
@@ -57,9 +56,11 @@ int main(int argc, char *argv[]) {
     int i, j;
     for (i = 1; i < argc; i++) {
         strlower(argv[i]);
+        if (!hasKeyword("invertedIndex.txt", argv[i])) continue;
         // Repeat for each keyword
         int urlWithKeyword = getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[i], tempArray);
         double idf = calIdfValue(urlWithKeyword, totalUrlCount);
+        // printf("c: %d, idf: %f\n", urlWithKeyword, idf);
         for (j = 0; j < urlWithKeyword; j++) {
             // Repeat for each url
             char buffer[64]; // Store url full name
@@ -68,10 +69,14 @@ int main(int argc, char *argv[]) {
             int tf = getKeywordCountFromUrl(buffer, argv[i]);
             // Get index
             int index = getIndexFromArray(urlArray, tempArray[j], totalUrlCount);
+            // printf("tf: %d, index: %d, idtdf: %f\n", tf, index, calTfidfValue(calTfValue(tf), idf));
             // Add this value to resultArray if valid
             if (index != -1) resultArray[index] += calTfidfValue(calTfValue(tf), idf);
         }
     }
+
+    // Free tempArray
+    free(tempArray);
 
     // Sort resultArray
     getTopTen(resultArray, urlArray, totalUrlCount);
@@ -81,8 +86,8 @@ int main(int argc, char *argv[]) {
         printf("url%d, %0.6f\n", urlArray[i], resultArray[i]);
     }
 
-    // free(urlArray);
-    // free(sortedArray);
+    free(urlArray);
+    free(resultArray);
 
     return 0;
 }
@@ -119,7 +124,7 @@ void getTopTen(double *resultArray, int *urlArray, int size) {
     if (resultArray == NULL || urlArray == NULL || size <= 0) return;
 
     // Loop ten times and get top ten
-    int i, j, highestIndex;
+    int i, j, highestIndex = 0;
     double highest = 0;
     for (i = 0; i < 10; i++) {
         // Less than 10
@@ -132,12 +137,14 @@ void getTopTen(double *resultArray, int *urlArray, int size) {
                 highestIndex = j;
             }
         }
+        // printf("Index: %d, value: %f\n", highestIndex, highest);
+        if (highest == 0) break;
         // Swap value
         swapValue(resultArray, highestIndex, i);
         // Swap index
         swapIndex(urlArray, highestIndex, i);
         // reset highest
-        highest = 0;
+        highest = 0, highestIndex = 0;
     }
 }
 
