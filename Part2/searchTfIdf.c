@@ -22,6 +22,12 @@ int *newIntArray(int size);
 double *newDoubleArray(int size);
 // Get index from urlArray
 int getIndexFromArray(int *urlArray, int url, int size);
+// Swap index for urlArray
+void swapIndex(int *urlArray, int index1, int index2);
+// Swap value for urlArray
+void swapValue(double *resultArray, int index1, int index2);
+// Get top ten from resultArray
+void getTopTen(double *resultArray, int *urlArray, int size);
 // Fatal error
 void fatalError(char *message);
 
@@ -67,13 +73,16 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    for (i = 0; i < totalUrlCount; i++) {
-        // Display results
-        printf("url%d, %.6f", urlArray[i], resultArray[i]);
+    // Sort resultArray
+    getTopTen(resultArray, urlArray, totalUrlCount);
+    for (i = 0; i < 10; i++) {
+        if (i >= totalUrlCount) break;
+        if (resultArray[i] == 0) break;
+        printf("url%d, %0.6f\n", urlArray[i], resultArray[i]);
     }
 
-    free(urlArray);
-    free(resultArray);
+    // free(urlArray);
+    // free(sortedArray);
 
     return 0;
 }
@@ -103,6 +112,51 @@ int getIndexFromArray(int *urlArray, int url, int size) {
         if (urlArray[i] == url) return i;
     }
     return -1;
+}
+
+// Get top ten from resultArray
+void getTopTen(double *resultArray, int *urlArray, int size) {
+    if (resultArray == NULL || urlArray == NULL || size <= 0) return;
+
+    // Loop ten times and get top ten
+    int i, j, highestIndex;
+    double highest = 0;
+    for (i = 0; i < 10; i++) {
+        // Less than 10
+        if (i >= size) break;
+        // Get top ten
+        for (j = i; j < size; j++) {
+            // Find the highest
+            if (resultArray[j] > highest) {
+                highest = resultArray[j];
+                highestIndex = j;
+            }
+        }
+        // Swap value
+        swapValue(resultArray, highestIndex, i);
+        // Swap index
+        swapIndex(urlArray, highestIndex, i);
+        // reset highest
+        highest = 0;
+    }
+}
+
+// Swap index for urlArray
+void swapIndex(int *urlArray, int index1, int index2) {
+    if (urlArray == NULL) return;
+
+    int temp = urlArray[index1];
+    urlArray[index1] = urlArray[index2];
+    urlArray[index2] = temp;
+}
+
+// Swap value for urlArray
+void swapValue(double *resultArray, int index1, int index2) {
+    if (resultArray == NULL) return;
+
+    double temp = resultArray[index1];
+    resultArray[index1] = resultArray[index2];
+    resultArray[index2] = temp;
 }
 
 // Calculate term frequency value for keyword in a url
