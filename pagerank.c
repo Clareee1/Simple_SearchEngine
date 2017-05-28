@@ -177,7 +177,7 @@ void printPRFunction(double* PRarray, Graph g, int size, int* sortedArray){
     fp = fopen("pagerankList.txt", "w");
     for (i = 0; i < size; i++){
         url = urlGivenIndex(sortedArray[i], g);
-        fprintf(fp, "url$d, %d, ", url, numberOfLinksOut(g, sortedArray[i]));
+        fprintf(fp, "url%d, %d, ", url, numberOfLinksOut(g, sortedArray[i]));
         fprintf(fp, "%.7f\n", PRarray[i]);
     }
     fclose(fp);
