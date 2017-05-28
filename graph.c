@@ -34,7 +34,7 @@ Graph createNewGraph(){
     //Obtain number of urls
     int size = getNumOfUrlFromFile("collection.txt");
 
-	if (size == 0){
+	if (size == 0){ //if there are no links in collection
 		return NULL;
 	}
 
