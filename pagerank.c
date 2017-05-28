@@ -1,5 +1,8 @@
 //Pagerank for Assignment 2 COMP1927 S1 2017
+//Finalising on 5/28/2017
+//Use to calculate Pagerank for a group of urls
 //By Hui Min Wang
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,7 +37,7 @@ int main(int argc, char * argv[]){
 
 void pagerank(double d, double diffPR, int maxIterations){
 //A hell amount of initialising
-    double d2  = d;
+    double d2  = d;      //in case g overwrites d
     Graph g = createNewGraph();
     int size = nVertices(g);  //Basically number of URLs
     int p = 0;
@@ -43,8 +46,8 @@ void pagerank(double d, double diffPR, int maxIterations){
     int linksIn = 0;  //number of links to url
     int linksFrom = 0;  //number of links from url
     double diff = diffPR;
-    double PR = 0;
-    double sum = 0;
+    double PR = 0;		//To store pagerank before putting into array
+    double sum = 0;		//Sum part of the pagerank formula
     double currPRArray[size]; //current pagerank
     double prevPRArray[size]; //previous pagerank
     initialiseArray(prevPRArray, size); //put 1/size for each
@@ -56,16 +59,18 @@ void pagerank(double d, double diffPR, int maxIterations){
 //The math part
     while(p < maxIterations && diff >= diffPR){
         diff = 0;
-        for (i = 0; i < size; i++){   // i is pi
-            linkedToGiven(g, i, tempArray);  //an array of urls that link to i
-            linksIn = numberOfLinksTo(g, i);  //number of links to i
-            for (j = 0 ; j < linksIn; j++){   // j is pj
+        for (i = 0; i < size; i++){				//i is pi
+            linkedToGiven(g, i, tempArray);		//an array of urls that link to i
+            linksIn = numberOfLinksTo(g, i);	//number of links to i
+            for (j = 0 ; j < linksIn; j++){		// j is pj
                 linksFrom = numberOfLinksOut(g,tempArray[j]);  //get how many links go out of j
-                sum = sum + prevPRArray[tempArray[j]]/linksFrom;
+				if( linksFrom != 0 ){			//add if not 0
+					sum = sum + prevPRArray[tempArray[j]]/linksFrom;
+				}
             }
             assert(sum < 1);
             //Get PageRank!!! Finally!!!
-            PR = (double)  (1-d2)/size *1.0000+ (double) d2*1.00000000*sum;
+            PR = (double)  (1-d2)/size *1.0000000+ (double) d2*1.00000000*sum;
             currPRArray[i] = PR;  //update currArray
             sum = 0;
         }
@@ -88,7 +93,7 @@ void pagerank(double d, double diffPR, int maxIterations){
     disposeGraph(g);
 }
 
-
+//Used to store 1/size into every entry in array
 void initialiseArray(double* array, int size){
     int i;
     double nsize = (double) size;
@@ -97,6 +102,7 @@ void initialiseArray(double* array, int size){
     }
 }
 
+//Finding absolute value of the number
 double abs2(double num){
     double ret = 0;
     if (num >= 0){
@@ -107,8 +113,7 @@ double abs2(double num){
     return ret;
 }
 
-//Not Done
-
+//Mergesort code from lectures
 void mergesort(int* array, int lo, int hi, double* PRarray){
 
     if(hi <= lo) return;
@@ -156,41 +161,23 @@ void merge(int* array, int lo, int mid, int hi, double* PRarray){
         j++;
     }
 
-
     for(i = lo, k = 0; i <= hi; i++, k++){
         array[i] = tmp2[k];
         PRarray[i] = tmp[k];
     }
     free(tmp2);
     free(tmp);
-
 }
-
-int less(double num1, double num2){
-
-    if(num1 < num2){
-        return 1;
-    } else {
-        return 0;
-    }
-
-}
-
-
-
-
 
 //Print function
 void printPRFunction(double* PRarray, Graph g, int size, int* sortedArray){
     int i;
     int url = 0;
     FILE *fp;
-    fp = fopen("pagerank.txt", "w");
+    fp = fopen("pagerankList.txt", "w");
     for (i = 0; i < size; i++){
         url = urlGivenIndex(sortedArray[i], g);
-        fprintf(fp, "url");
-        fprintf(fp, "%d, ", url);
-        fprintf(fp, "%d, ", numberOfLinksOut(g, sortedArray[i]));
+        fprintf(fp, "url$d, %d, ", url, numberOfLinksOut(g, sortedArray[i]));
         fprintf(fp, "%.7f\n", PRarray[i]);
     }
     fclose(fp);

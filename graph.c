@@ -31,14 +31,19 @@ void addTovList(vlist node, int from, int to);
 
 Graph createNewGraph(){
 
+    //Obtain number of urls
+    int size = getNumOfUrlFromFile("collection.txt");
+
+	if (size == 0){
+		return NULL;
+	}
+
+    //Obtains all urls and stores into Array
+    int *index = getNameOfUrlFromFile("collection.txt", size);
+
     //Make space for graph
   	Graph new = malloc(sizeof(GraphRep));
   	assert(new != NULL);
-
-    //Obtain number of urls
-    int size = getNumOfUrlFromFile("collection.txt");
-    //Obtains all urls and stores into Array
-    int *index = getNameOfUrlFromFile("collection.txt", size);
 
     //Initialise Stuff
   	int i, j;
