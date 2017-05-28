@@ -64,7 +64,7 @@ void pagerank(double d, double diffPR, int maxIterations){
             linksIn = numberOfLinksTo(g, i);	//number of links to i
             for (j = 0 ; j < linksIn; j++){		// j is pj
                 linksFrom = numberOfLinksOut(g,tempArray[j]);  //get how many links go out of j
-				if( linksFrom != 0 ){			//add if not 0
+				if( linksFrom != 0 && tempArray[j] != i ){			//add if not 0
 					sum = sum + prevPRArray[tempArray[j]]/linksFrom;
 				}
             }
