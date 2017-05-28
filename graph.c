@@ -10,7 +10,7 @@
 #include "graph.h"
 #include "parser.h"
 
-//A node?
+//A node
 typedef struct  vNode *vlist;
 struct vNode {
     int numLinksToIt;     //Stores number of links to url
@@ -49,7 +49,6 @@ Graph createNewGraph(){
   	int i, j;
   	new->nV = size;
   	new->indexArray = index;
-    printf("index is %d\n", index[0]);
 
     //Make space for edges (the actual graph)
   	new->edges = malloc((size) * sizeof(int *));
@@ -103,7 +102,7 @@ Graph createNewGraph(){
             }
         }
     }
-    showGraph(new);
+    //showGraph(new);
   	return new;
 
 }
