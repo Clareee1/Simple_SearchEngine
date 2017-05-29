@@ -69,6 +69,132 @@ static ArrayList newNode(char *name) {
     return new;
 }
 
+// Get index of member
+static int indexOf(int *array, int size, int toFind) {
+    if (array == NULL) return -1;
+    int i;
+    for (i = 0; i < size; i++) {
+        if (array[i] == toFind) return i;
+    }
+    return -1;
+}
+
+// Swap index
+static void swap(int *numbers, int i, int j) {
+    if (numbers == NULL) return;
+    int temp = numbers[i];
+    numbers[i] = numbers[j];
+    numbers[j] = temp;
+}
+
+static double W(Array array, int *numbers, int length) {
+    // Calculate scaled-footrule distance
+    double result = 0;
+    ArrayList curr;
+    int i;
+    for (curr = array -> first; curr != NULL; curr = curr -> next) {
+        // Loop through all arrays
+        double constantSize = (double)array -> unionSize;
+        for (i = 0; i < curr -> size; i++) {
+            double currSize = (double)curr -> size;
+            double constantValue = (i + 1) / currSize;
+            double newValue = (indexOf(numbers, length, curr -> list[i]) + 1)/(constantSize);
+            double value = constantValue - newValue;
+            if (value < 0) value *= -1;
+            result += value;
+        }
+    }
+    return result;
+}
+
+static int *intdup(int *numbers, int length) {
+    if (numbers == NULL) return NULL;
+    int *cpy = malloc(length * sizeof(int));
+    if (cpy == NULL) return NULL;
+
+    int i;
+    for (i = 0; i < length; i++) {
+        cpy[i] = numbers[i];
+    }
+    return cpy;
+}
+
+static int f(int number) {
+    if (number == 0) return 1;
+    if (number == 1) return 1;
+    return number * f(number - 1);
+}
+
+// Permutation
+static void permute(Array array, int *numbers, int length) {
+    if (length == 1) {
+        printf("%.6f\n", W(array, numbers, length));
+    } else if (length == 2) {
+        double one = W(array, numbers, length);
+        swap(numbers, 0, 1);
+        double two = W(array, numbers, length);
+        printf("%.6f\n", one > two ? two : one);
+    } else if (length > 2) {
+        double min = -1;
+        int *minArray = intdup(numbers, length);
+        int i, j, k = 1;
+        int *temp = intdup(numbers, length);
+        for (i = 0; i < length; i++) {
+            // Swap (1, 2), (3, 4)...
+            // Then swap(3, 4), (5, 6)...
+            // Then do it backwards and repeat
+            int data[4] = {1, 2, length - 2, 2};
+            int count = 0;
+            int factorial = f(length - 1);
+            for (j = 0; j <= factorial; j++) {
+                int index = j % 3;
+                k = data[index];
+                if (index < 3) {
+                    while (k + 1 < length && count < factorial) {
+                        swap(numbers, k, k + 1);
+                        double result = W(array, numbers, length);
+                        if (min == -1) min = result;
+                        else if (result < min) {
+                            min = result;
+                            free(minArray);
+                            minArray = intdup(numbers, length);
+                        }
+                        k += 2;
+                    }
+                } else {
+                    while (k > 0 && count < factorial) {
+                        swap(numbers, k, k + 1);
+                        double result = W(array, numbers, length);
+                        if (min == -1) min = result;
+                        else if (result < min) {
+                            min = result;
+                            free(minArray);
+                            minArray = intdup(numbers, length);
+                        }
+                        k -= 2;
+                    }
+                }
+                if (count == factorial) break;
+            }
+            numbers = intdup(temp, length);
+            swap(numbers, 0, i + 1);
+        }
+        printf("%.6f\n", min);
+        for (i = 0; i < length; i++) {
+            printf("url%d\n", minArray[i]);
+        }
+    } else {
+        return;
+    }
+}
+
+// Calculate scaled-footrule distance
+void BruteForce(Array array) {
+    if (array == 0) return;
+    // Loop trough all possible combinations and get the smallest result
+    permute(array, array -> unionList, array -> unionSize);
+}
+
 // Create a new array list with size
 Array newList(int size) {
     if (size < 1) return NULL;
@@ -77,7 +203,8 @@ Array newList(int size) {
     Array new = malloc(sizeof(struct arrayRep));
     if (new == NULL) return NULL;
 
-    new -> numOfArray = new -> unionSize = new -> max = new -> totalSize = 0;
+    new -> numOfArray = new -> unionSize = 0;
+    new -> max = new -> totalSize = 0;
     new -> first = new -> last = NULL;
     new -> unionList = NULL;
 

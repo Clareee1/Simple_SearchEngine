@@ -10,6 +10,8 @@ typedef struct arrayRep * Array;
 
 // Create a new array list with size
 Array newList(int);
+// Calculate scaled-footrule distance
+void BruteForce(Array);
 // Update unionList
 void updateUnionlist(Array);
 // Add a new rank into arrayList
