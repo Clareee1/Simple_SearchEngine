@@ -9,7 +9,6 @@
 #define TRUE 0
 #define FALSE 1
 #define MAX_URL_TO_PRINT 10
-#define MAX_URL 100
 #define MAX_BUFFER 64
 
 int arrayConjunction (int *, int *, int *, int, int);
@@ -54,10 +53,12 @@ int main (int argc, char * argv[]) {
 	    while (fscanf(fp, "\n %s ", buffer) == 1) {
             strlower(buffer);
             int i;
+            int count = 0;
             for (i = 0; i < combinedSize; i++) {
             	char * tmp = getStringFromNum (combined[i]);
-	    	    if (strstr(buffer, tmp) != NULL) {
+	    	    if (strstr(buffer, tmp) != NULL && count < 10) {
 	    	    	printf("%s\n", tmp);
+	    	    	count++;
 	    	    }
 	    	    free(tmp);
 		    }
