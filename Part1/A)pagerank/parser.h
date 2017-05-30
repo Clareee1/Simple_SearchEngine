@@ -6,6 +6,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "BSTree.h"
+
 // Convert a string to lower (Henry)
 void strlower(char* str);
 
@@ -16,6 +18,8 @@ int getNumUrlFromFile(char *);
 // Get name of links from collection.txt (Henry)
 void getUrlFromFile(char* ,int*);
 
+//Get all texts from a given webpage (Part 1 B, 1 C) (Henry)
+void getTxtFromFile(char *, Tree);
 
 int *getNameOfUrlFromFile(char *, int);
 // Get number of links from collection.txt (Henry)

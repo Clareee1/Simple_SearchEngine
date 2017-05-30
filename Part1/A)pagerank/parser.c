@@ -22,7 +22,6 @@ void strlower(char* str) {
     }
 }
 
-// Get all links from a given webpage (Henry)
 void getUrlFromFile(char *name, int *urlArray) {
     if (name == NULL || urlArray == NULL) exit(0);
 
@@ -74,11 +73,8 @@ int getNumUrlFromFile(char *name) {
 }
 
 
-
-
-
-// Get all links from a given webpage (Henry)
-/*void getTxtFromFile(char *name, Tree bst) {
+//Get all links from a given webpage (Henry)
+void getTxtFromFile(char *name, Tree bst) {
     if (name == NULL) return;
     FILE *fp = fopen(name, "r");
     if (fp != NULL) {
@@ -99,7 +95,8 @@ int getNumUrlFromFile(char *name) {
             } else if (sectionCount == 3) break; // Done
         }
     }
-}*/
+	fclose(fp);
+}
 
 // Get name of links from collection.txt (Henry)
 int *getNameOfUrlFromFile(char *name, int num) {
@@ -125,7 +122,6 @@ int *getNameOfUrlFromFile(char *name, int num) {
 // Get number of links from collection.txt (Henry)
 int getNumOfUrlFromFile(char *name) {
     if (name == NULL) return -1;
-
     int numOfUrl = 0;
     FILE *fp = fopen(name, "r");
     // Be able to open file
@@ -259,14 +255,17 @@ int getNumFromString(char *name) {
     return -1;
 }
 
-// Convert 123 to url123 (Alina)
+// Convert 23 to url23 (Alina)
 char * getStringFromNum (int num) {
-    int size = snprintf (NULL, 0, "url%d.txt", num);
+    // get the size of the urlxx
+    int size = snprintf (NULL, 0, "url%d", num);
     char * name = malloc ((size + 1) * sizeof(char));
     if (name == NULL) {
         printf("Out of Memory.\n");
         exit (EXIT_FAILURE);
     }
+    // converting 23 to url23
     snprintf(name, size + 1, "url%d", num);
+    // return to the calling function
     return name;
 }
