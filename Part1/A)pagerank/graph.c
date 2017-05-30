@@ -215,22 +215,27 @@ int removeDuplicate(int* Array, int size, int curr){
 	while(i < size){
 		j = i + 1;
         while (j < size){
-			if(temp[i] == Array[j] || Array[j] == curr){
+			if(temp[i] == Array[j] || Array[j-1] == curr || Array[j] == curr){
+                int k;
+                if(Array[j-1] == curr){
+                    k = j-1;
+                } else {
+                    k = j;
+                }
 				count++;
-				int k = j;
+                printf("array is %d and curr is %d\n", Array[j], curr);
                 if(k != size){
-				    while(k < size){
+				    while(k <= size){
 					    Array[k] = Array[k+1];
 					    k++;
                     }
 
 				}
-                if( i != 0){
+                if(i != 0){
                     i--;
                 }
                 j--;
                 size--;
-                
 			}
 			j++;
 		}
