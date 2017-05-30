@@ -258,7 +258,7 @@ int getNumFromString(char *name) {
 // Convert 23 to url23 (Alina)
 char * getStringFromNum (int num) {
     // get the size of the urlxx
-    int size = snprintf (NULL, 0, "url%d", num);
+    int size = snprintf (NULL, 0, "url%d.txt", num);
     char * name = malloc ((size + 1) * sizeof(char));
     if (name == NULL) {
         printf("Out of Memory.\n");

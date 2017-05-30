@@ -14,7 +14,7 @@ void strlower(char* str);
 // Get all links from a given webpage (Part 1 A) (Henry)
 int getNumUrlFromFile(char *);
 // Get all texts from a given webpage (Part 1 B, 1 C) (Henry)
-// void getTxtFromFile(char *, Tree);
+void getTxtFromFile(char *, Tree);
 // Get name of links from collection.txt (Henry)
 void getUrlFromFile(char* ,int*);
 
