@@ -10,7 +10,7 @@
 #include "graph.h"
 #include "parser.h"
 
-//A node?
+//A node
 typedef struct  vNode *vlist;
 struct vNode {
     int numLinksToIt;     //Stores number of links to url
@@ -28,23 +28,28 @@ typedef struct GraphRep {
 
 //void makevList(int url, Graph g);
 void addTovList(vlist node, int from, int to);
+int removeDuplicate(int* Array, int size, int curr);
 
 Graph createNewGraph(){
+
+    //Obtain number of urls
+    int size = getNumOfUrlFromFile("collection.txt");
+
+	if (size == 0){ //if there are no links in collection
+		return NULL;
+	}
+
+    //Obtains all urls and stores into Array
+    int *index = getNameOfUrlFromFile("collection.txt", size);
 
     //Make space for graph
   	Graph new = malloc(sizeof(GraphRep));
   	assert(new != NULL);
 
-    //Obtain number of urls
-    int size = getNumOfUrlFromFile("collection.txt");
-    //Obtains all urls and stores into Array
-    int *index = getNameOfUrlFromFile("collection.txt", size);
-
     //Initialise Stuff
   	int i, j;
   	new->nV = size;
   	new->indexArray = index;
-    printf("index is %d\n", index[0]);
 
     //Make space for edges (the actual graph)
   	new->edges = malloc((size) * sizeof(int *));
@@ -76,29 +81,36 @@ Graph createNewGraph(){
     //More initialising...
     char url[20];
     int tsize;
-    int tarray[size];
     int k = 0;
+	int dupli = 0;
 
     //Making and putting stuff into the graph
     for(i = 0; i < size; i++){
         //Gets url, its size and links
         sprintf(url, "url%d.txt", new -> indexArray[i]);
-        tsize = getUrlFromFile(url, tarray);
-        new -> lledges[i] -> numLinksOut = tsize;
+        tsize = getNumUrlFromFile(url);
+        if(tsize != 0){
+            int *tarray = malloc(sizeof(int) * (tsize+1)); 
+            getUrlFromFile(url, tarray);
+		    dupli = removeDuplicate(tarray, tsize, new->indexArray[i]);
+            tsize = tsize - dupli;
+            new -> lledges[i] -> numLinksOut = tsize;
 
         //Adds edge, and adds to node...
-        k = 0;
-        if(tsize != 0){
+            k = 0;
             for(j = 0; j < tsize; j++){
                 k = findIndex(new, tarray[j], new -> nV);
-                if (k > -1){
+                if (k > -1 && k != i){
                     new->edges[i][k] = 1;   // i links to k
                     addTovList(new->lledges[k], i, size);
                 }
             }
+            free(tarray);
+        } else if (tsize == 0){
+             new -> lledges[i] -> numLinksOut = tsize;
         }
     }
-    showGraph(new);
+    //showGraph(new);
   	return new;
 
 }
@@ -115,7 +127,8 @@ void disposeGraph(Graph g)
   	int i;
   	for (i = 0; i < g->nV; i++) {
   		free(g->edges[i]);
-      free(g->lledges[i]->linksToIt);
+        free(g->lledges[i]->linksToIt);
+        free(g->lledges[i]);
     }
     free(g->indexArray);
   	free(g->edges);
@@ -192,3 +205,37 @@ int isGraphEmpty(Graph g){
         return 1;
     }
 }
+
+int removeDuplicate(int* Array, int size, int curr){
+	int* temp = Array;
+	int count = 0;
+    int i = 0;
+    int j = 0;
+
+	while(i < size){
+		j = i + 1;
+        while (j < size){
+			if(temp[i] == Array[j] || Array[j] == curr){
+				count++;
+				int k = j;
+                if(k != size){
+				    while(k < size){
+					    Array[k] = Array[k+1];
+					    k++;
+                    }
+
+				}
+                if( i != 0){
+                    i--;
+                }
+                j--;
+                size--;
+                
+			}
+			j++;
+		}
+		i++;
+	}
+	return count;
+}
+
