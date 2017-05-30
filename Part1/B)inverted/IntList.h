@@ -1,6 +1,23 @@
 // IntList.h - Lists of integers (interface)
 // Written by John Shepherd, July 2008
 // Modified by Aldhytha Karina Sari, 21/05/2017
+//
+// Removed the following functions:
+// -void IntListInsertInOrder(IntList L, int v)
+// -IntList IntListCopy(IntList L)
+// -IntList IntListSortedCopy(IntList L)
+// -int IntListIsSorted(IntList L)
+// -int IntListOK(IntList L)
+// -void IntListPrint(FILE *outf, IntList L)
+// 
+// Changed from doubly linked list to singly linked list
+// Changed the following functions:
+// -void showIntList(FILE* fp, IntList L)
+// -void freeIntList(IntList L) function
+// -void IntListInsert(IntList L, int v)
+// -void IntListDelete(IntList L, int v) to void IntFirstDelete(IntList L)
+//
+// Added int findNode (IntList L, int v) function
 
 #ifndef INTLIST_H
 #define INTLIST_H
@@ -24,7 +41,7 @@ void showIntList(FILE*, IntList);
 // append one integer to the end of a list
 void IntListInsert(IntList, int);
 
-//find Node
+// find the integer value in the list
 int findNode (IntList L, int v);
 
 // delete head of list

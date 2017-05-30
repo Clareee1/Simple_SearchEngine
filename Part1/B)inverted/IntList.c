@@ -1,6 +1,23 @@
 // IntList.c - Lists of integers
 // Written by John Shepherd, July 2008
 // Modified by Aldhytha Karina Sari, 21/05/2017
+//
+// Removed the following functions:
+// -void IntListInsertInOrder(IntList L, int v)
+// -IntList IntListCopy(IntList L)
+// -IntList IntListSortedCopy(IntList L)
+// -int IntListIsSorted(IntList L)
+// -int IntListOK(IntList L)
+// -void IntListPrint(FILE *outf, IntList L)
+// 
+// Changed from doubly linked list to singly linked list
+// Changed the following functions:
+// -void showIntList(FILE* fp, IntList L)
+// -void freeIntList(IntList L) function
+// -void IntListInsert(IntList L, int v)
+// -void IntListDelete(IntList L, int v) to void IntFirstDelete(IntList L)
+//
+// Added int findNode (IntList L, int v) function
 
 #include <stdlib.h>
 #include <stdio.h>
