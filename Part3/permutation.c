@@ -1,4 +1,4 @@
-//
+/
 //  permutation.c
 //  Created by Henry Quan on 29/05/17.
 //
@@ -72,11 +72,11 @@ void permute(int *numbers, int length)
         for (i = 0; i < length; i++) {
             // Swap (1, 2), (3, 4)...
             // Then swap(3, 4), (5, 6)...
-            int array[4] = {1, 2, length - 2, 2};
+            int array[4] = {1, 2, length - 2, length - 3};
             int count = 0;
             int factorial = f(length - 1);
             for (j = 0; j <= factorial; j++) {
-                int index = j % 3;
+                int index = j % 4;
                 k = array[index];
                 if (index < 3) {
                     while (k + 1 < length && count < factorial) {

@@ -119,72 +119,29 @@ static int *intdup(int *numbers, int length) {
     return cpy;
 }
 
-static int f(int number) {
-    if (number == 0) return 1;
-    if (number == 1) return 1;
-    return number * f(number - 1);
-}
-
 // Permutation
-static void permute(Array array, int *numbers, int length) {
-    if (length == 1) {
-        printf("%.6f\n", W(array, numbers, length));
-    } else if (length == 2) {
-        double one = W(array, numbers, length);
-        swap(numbers, 0, 1);
-        double two = W(array, numbers, length);
-        printf("%.6f\n", one > two ? two : one);
-    } else if (length > 2) {
-        double min = -1;
-        int *minArray = intdup(numbers, length);
-        int i, j, k = 1;
-        int *temp = intdup(numbers, length);
-        for (i = 0; i < length; i++) {
-            // Swap (1, 2), (3, 4)...
-            // Then swap(3, 4), (5, 6)...
-            // Then do it backwards and repeat
-            int data[4] = {1, 2, length - 2, 2};
-            int count = 0;
-            int factorial = f(length - 1);
-            for (j = 0; j <= factorial; j++) {
-                int index = j % 3;
-                k = data[index];
-                if (index < 3) {
-                    while (k + 1 < length && count < factorial) {
-                        swap(numbers, k, k + 1);
-                        double result = W(array, numbers, length);
-                        if (min == -1) min = result;
-                        else if (result < min) {
-                            min = result;
-                            free(minArray);
-                            minArray = intdup(numbers, length);
-                        }
-                        k += 2;
-                    }
-                } else {
-                    while (k > 0 && count < factorial) {
-                        swap(numbers, k, k + 1);
-                        double result = W(array, numbers, length);
-                        if (min == -1) min = result;
-                        else if (result < min) {
-                            min = result;
-                            free(minArray);
-                            minArray = intdup(numbers, length);
-                        }
-                        k -= 2;
-                    }
-                }
-                if (count == factorial) break;
-            }
-            numbers = intdup(temp, length);
-            swap(numbers, 0, i + 1);
+static void permute(Array array, int *numbers, int start, int length, double* min, int **result) {
+    if(start == length)
+    {
+        double value = W(array, numbers, length);
+        if (*min == -1) *min = value;
+        else if (value < *min) {
+            *min = value;
+            free(*result);
+            *result = intdup(numbers, length);
         }
-        printf("%.6f\n", min);
-        for (i = 0; i < length; i++) {
-            printf("url%d\n", minArray[i]);
-        }
-    } else {
         return;
+    }
+
+    permute(array, numbers, start + 1, length, min, result);
+    int i;
+    for(i = start + 1; i < length; i++)
+    {
+        if(numbers[start] == numbers[i])
+            continue;
+        swap(numbers, start, i);
+        permute(array, numbers, start + 1, length, min, result);
+        swap(numbers, start, i);
     }
 }
 
@@ -192,7 +149,12 @@ static void permute(Array array, int *numbers, int length) {
 void BruteForce(Array array) {
     if (array == 0) return;
     // Loop trough all possible combinations and get the smallest result
-    permute(array, array -> unionList, array -> unionSize);
+    double min = -1;
+    int *list = calloc(array -> unionSize, sizeof(int));
+    permute(array, array -> unionList, 0, array -> unionSize, &min, &list);
+    printf("%.6f\n", min);
+    int i;
+    for (i = 0; i < array -> unionSize; i++) printf("url%d\n", list[i]);
 }
 
 // Create a new array list with size
