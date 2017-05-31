@@ -11,6 +11,10 @@
 
 #define MAX_BUFFER 64
 
+//HELPER FUNCTION
+// Convert a string to lower (Henry)
+void strlower(char* str);
+
 // Convert a string to lower (Henry)
 void strlower(char* str) {
     if (str == NULL) return;
@@ -22,9 +26,27 @@ void strlower(char* str) {
     }
 }
 
-// Get all links from a given webpage (Henry)
-int getUrlFromFile(char *name, int *urlArray) {
-    if (name == NULL || urlArray == NULL) return -1;
+// Normalise the word (remove all that's non-alphanumeric and lowercase everything) (Alina)
+void normalise (char * word) {
+    //lowercase the word
+    strlower (word);
+    int length = strlen (word);
+    int counter = 0;
+    int i;
+    for (i = 0; i < length; i++) {
+        //keep the alphanumeric characters
+        if (isalnum(word[i]) != 0) {
+            word[counter] = word[i];
+            counter++;
+        }
+    }
+    //to keep the string intact
+    word[counter] = '\0';
+}
+
+// Get name of links from collection.txt (Henry)
+void getUrlFromFile(char *name, int *urlArray) {
+    if (name == NULL || urlArray == NULL) exit(0);
 
     FILE *fp = fopen(name, "r");
     if (fp != NULL) {
@@ -45,14 +67,38 @@ int getUrlFromFile(char *name, int *urlArray) {
                 break;
             }
         }
+    }
+    fclose(fp);
+}
+
+// Get number of links from collection.txt (Henry)
+int getNumUrlFromFile(char *name) {
+    FILE *fp = fopen(name, "r");
+    if (fp != NULL) {
+        // Scan all text
+        char buffer[MAX_BUFFER];
+        int sectionCount = 0;
+        int urlCount = 0;
+        while (fscanf(fp, "\n %s ", buffer) == 1) {
+            // End of section-1 and the start of section-2
+            if (strcmp(buffer, "Section-1") == 0 || strcmp(buffer, "#end") == 0) sectionCount++;
+            else if (strstr(buffer, "url")) {
+                urlCount++;
+            } else if (sectionCount == 2) {
+                break;
+            }
+        }
         // printf("\n");
+        fclose(fp);
         return urlCount;
     }
+    fclose(fp);
     return -1;
 }
 
-// Get all links from a given webpage (Henry)
-/*void getTxtFromFile(char *name, Tree bst) {
+
+//Get all links from a given webpage (Henry)
+void getTxtFromFile(char *name, Tree bst) {
     if (name == NULL) return;
     FILE *fp = fopen(name, "r");
     if (fp != NULL) {
@@ -63,17 +109,16 @@ int getUrlFromFile(char *name, int *urlArray) {
             // End of section-1 and the start of section-2
             if (strcmp(buffer, "Section-2") == 0 || strcmp(buffer, "#end") == 0) sectionCount++;
             else if (sectionCount == 2) { // This is a keyword
-                // If it has a full stop at the end, remove it
-                if (buffer[strlen(buffer) - 1] == '.') buffer[strlen(buffer) - 1] = '\0';
-                // Convert it to lower cased
-                strlower(buffer);
+                // normalise it
+                normalise(buffer);
                 // Add it to Binary Tree (Alina)
                 int url = getNumFromString(name);
                 TreeFindAndInsert(bst, buffer, url);
             } else if (sectionCount == 3) break; // Done
         }
     }
-}*/
+    fclose(fp);
+}
 
 // Get name of links from collection.txt (Henry)
 int *getNameOfUrlFromFile(char *name, int num) {
@@ -99,7 +144,6 @@ int *getNameOfUrlFromFile(char *name, int num) {
 // Get number of links from collection.txt (Henry)
 int getNumOfUrlFromFile(char *name) {
     if (name == NULL) return -1;
-
     int numOfUrl = 0;
     FILE *fp = fopen(name, "r");
     // Be able to open file
@@ -191,7 +235,7 @@ int getKeywordCountFromUrl(char *name, char *keyword) {
     if (fp != NULL) {
         char buffer[64];
         while (fscanf(fp, "\n %s ", buffer) == 1) {
-            strlower(buffer);
+            normalise(buffer);
             // We found that word, YEAH!
             if (strcmp(buffer, keyword) == 0) count++;
         }
@@ -209,7 +253,7 @@ int hasKeyword(char *name, char *keyword) {
     if (fp != NULL) {
         char buffer[MAX_BUFFER];
         while (fscanf(fp, "\n %s ", buffer) == 1) {
-            strlower(buffer);
+            normalise(buffer);
             // We found that word, YEAH!
             if (strcmp(buffer, keyword) == 0) {
                 count = 1;
@@ -233,14 +277,17 @@ int getNumFromString(char *name) {
     return -1;
 }
 
-// Convert 123 to url123 (Alina)
+// Convert 23 to url23 (Alina)
 char * getStringFromNum (int num) {
-    int size = snprintf (NULL, 0, "url%d.txt", num);
+    // get the size of the urlxx
+    int size = snprintf (NULL, 0, "url%d", num);
     char * name = malloc ((size + 1) * sizeof(char));
     if (name == NULL) {
         printf("Out of Memory.\n");
         exit (EXIT_FAILURE);
     }
+    // converting 23 to url23
     snprintf(name, size + 1, "url%d", num);
+    // return to the calling function
     return name;
 }
