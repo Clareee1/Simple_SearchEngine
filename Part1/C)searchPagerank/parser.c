@@ -98,7 +98,7 @@ int getNumUrlFromFile(char *name) {
 
 
 //Get all links from a given webpage (Henry)
-void getTxtFromFile(char *name, Tree bst) {
+/*void getTxtFromFile(char *name, Tree bst) {
     if (name == NULL) return;
     FILE *fp = fopen(name, "r");
     if (fp != NULL) {
@@ -118,7 +118,7 @@ void getTxtFromFile(char *name, Tree bst) {
         }
     }
     fclose(fp);
-}
+}*/
 
 // Get name of links from collection.txt (Henry)
 int *getNameOfUrlFromFile(char *name, int num) {
