@@ -22,7 +22,7 @@ int arrayConjunction (int *, int *, int *, int, int);
 void printArray (int *, int);
 
 int main (int argc, char * argv[]) {
-	if (argc > 2) {
+	if (argc > 1) {
 		//make new array for the urls in the intersection of urls
 		int * combined = createArray (MAX_URL);
 		int combinedSize = 0;
@@ -31,7 +31,7 @@ int main (int argc, char * argv[]) {
 			normalise(argv[counter]);
 			if (hasKeyword ("invertedIndex.txt", argv[counter]) == 0) {
 				exit(EXIT_SUCCESS);
-			} 
+			}
 			//get the array of url that contains the keyword
 			int arraySize = getNumOfUrlForKeywordFromFile("invertedIndex.txt", argv[counter]);
 			int * urlArray = createArray (arraySize);
