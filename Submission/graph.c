@@ -91,8 +91,8 @@ Graph createNewGraph(){
         sprintf(url, "url%d.txt", new -> indexArray[i]);
         tsize = getNumUrlFromFile(url);
         if(tsize != 0){  //only if there are any urls in file
-            int *tarray = malloc(sizeof(int) * (tsize+1)); //temporary array
-	    assert(tarray != NULL);
+            int *tarray = malloc(sizeof(int) * (tsize+2)); //temporary array
+            assert(tarray != NULL);
             getUrlFromFile(url, tarray);  //gets urls in the file
             dupli = removeDuplicate(tarray, tsize, new->indexArray[i]);
             tsize = tsize - dupli;
@@ -126,15 +126,15 @@ int urlGivenIndex(int index, Graph g){
 //Free all space
 void disposeGraph(Graph g)
 {
-	  if (g == NULL) return;
-  	int i;
-  	for (i = 0; i < g->nV; i++) {
-  		free(g->edges[i]);
+    if (g == NULL) return;
+    int i;
+    for (i = 0; i < g->nV; i++) {
+        free(g->edges[i]);
         free(g->lledges[i]->linksToIt);
         free(g->lledges[i]);
     }
     free(g->indexArray);
-  	free(g->edges);
+    free(g->edges);
     free(g->lledges);
     free(g);
 }
@@ -219,19 +219,19 @@ int removeDuplicate(int* Array, int size, int curr){
     while(i < size){  //scans through array
         j = i + 1;
         while (j < size){    //compares each value to every value after it
-	    if(temp[i] == Array[j] || Array[j-1] == curr || Array[j] == curr){
+            if(temp[i] == Array[j] || Array[j-1] == curr || Array[j] == curr){
                 int k;
                 if(Array[j-1] == curr){  //for self loop
                     k = j-1;
                 } else {
                     k = j;
                 }
-	        count++;
+                count++;
                 //printf("array is %d and curr is %d\n", Array[j], curr);
                 if(k != size){   //k is the index of the value we want to get rid of
-		    while(k <= size){   //remove k by shifting everything forward.
-		        Array[k] = Array[k+1];
-	                k++;
+                   while(k <= size){   //remove k by shifting everything forward.
+                       Array[k] = Array[k+1];
+                       k++;
                     }
                 }
                 if(i != 0){  //to not miss any duplicates (for repeated dups)
@@ -242,7 +242,7 @@ int removeDuplicate(int* Array, int size, int curr){
             }
             j++;
         }
-	i++;
+        i++;
     }
     return count;
 }
