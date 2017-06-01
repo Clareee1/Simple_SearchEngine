@@ -65,6 +65,7 @@ static ArrayList newNode(char *name) {
         new -> list[index] = buffer;
         index++;
     }
+    fclose(fp);
 
     return new;
 }
@@ -155,6 +156,7 @@ void BruteForce(Array array) {
     printf("%.6f\n", min);
     int i;
     for (i = 0; i < array -> unionSize; i++) printf("url%d\n", list[i]);
+    free(list);
 }
 
 // Create a new array list with size
@@ -204,6 +206,7 @@ void updateUnionlist(Array array) {
             index++;
         }
     }
+    free(tempList);
 }
 
 // Add a new rank into arrayList
@@ -261,9 +264,11 @@ void freeArray(Array array) {
     if (array == NULL) return;
 
     // Free all lists
-    ArrayList curr;
-    for (curr = array -> first; curr != NULL; curr = curr -> next) {
+    ArrayList curr, next;
+    for (curr = array -> first; curr != NULL; curr = next) {
+        next = curr -> next;
         free(curr -> list);
+        free(curr);
     }
 
     free(array -> unionList);
