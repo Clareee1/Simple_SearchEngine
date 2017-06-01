@@ -12,8 +12,6 @@
 #define MAX_BUFFER 64
 
 //HELPER FUNCTION
-// Convert a string to lower (Henry)
-void strlower(char* str);
 
 // Convert a string to lower (Henry)
 void strlower(char* str) {

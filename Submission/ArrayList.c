@@ -234,7 +234,7 @@ void addToList(Array array, char *name) {
 }
 
 // Print an Array
-void printArray(Array array) {
+/* void printArray(Array array) {
     if (array == NULL) return;
 
     // Start with basic stats
@@ -254,7 +254,7 @@ void printArray(Array array) {
         }
         printf("\nSize: %d Max: %d\n", curr -> size, curr -> max);
     }
-}
+}*/
 
 // Free an Array
 void freeArray(Array array) {

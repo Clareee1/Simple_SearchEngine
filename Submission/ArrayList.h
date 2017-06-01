@@ -17,7 +17,7 @@ void updateUnionlist(Array);
 // Add a new rank into arrayList
 void addToList(Array, char *);
 // Print an Array
-void printArray(Array);
+// void printArray(Array);
 // Free an Array
 void freeArray(Array);
 
