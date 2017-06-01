@@ -224,15 +224,14 @@ int removeDuplicate(int* Array, int size, int curr){
                 } else {
                     k = j;
                 }
-				count++;
+		count++;
                 //printf("array is %d and curr is %d\n", Array[j], curr);
                 if(k != size){
-				    while(k <= size){
-					    Array[k] = Array[k+1];
-					    k++;
+		    while(k <= size){
+		        Array[k] = Array[k+1];
+			k++;
                     }
-
-				}
+		}
                 if(i != 0){
                     i--;
                 }
