@@ -58,7 +58,8 @@ int main(int argc, char *argv[]) {
         strlower(argv[i]);
         if (!hasKeyword("invertedIndex.txt", argv[i])) continue;
         // Repeat for each keyword
-        int urlWithKeyword = getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[i], tempArray);
+        int urlWithKeyword = getNumOfUrlForKeywordFromFile("invertedIndex.txt", argv[i]);
+        getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[i], tempArray);
         double idf = calIdfValue(urlWithKeyword, totalUrlCount);
         // printf("c: %d, idf: %f\n", urlWithKeyword, idf);
         for (j = 0; j < urlWithKeyword; j++) {
