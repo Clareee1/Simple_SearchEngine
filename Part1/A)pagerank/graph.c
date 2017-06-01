@@ -225,7 +225,7 @@ int removeDuplicate(int* Array, int size, int curr){
                     k = j;
                 }
 				count++;
-                printf("array is %d and curr is %d\n", Array[j], curr);
+                //printf("array is %d and curr is %d\n", Array[j], curr);
                 if(k != size){
 				    while(k <= size){
 					    Array[k] = Array[k+1];
