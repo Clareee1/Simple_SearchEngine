@@ -73,6 +73,7 @@ Graph createNewGraph(){
     for (i = 0; i < size; i++) {
         new -> lledges[i] = malloc(sizeof(struct vNode));
         new -> lledges[i] -> linksToIt = (int*)calloc(size, sizeof(int));
+	assert(new -> lledges[i] -> linksToIt != NULL);
         new -> lledges[i] -> linksToIt[0] = -1;
         new -> lledges[i] -> numLinksToIt = 0;
         new -> lledges[i] -> numLinksOut = 0;
@@ -91,6 +92,7 @@ Graph createNewGraph(){
         tsize = getNumUrlFromFile(url);
         if(tsize != 0){
             int *tarray = malloc(sizeof(int) * (tsize+1)); 
+	    assert(tarray != NULL);
             getUrlFromFile(url, tarray);
 		    dupli = removeDuplicate(tarray, tsize, new->indexArray[i]);
             tsize = tsize - dupli;
