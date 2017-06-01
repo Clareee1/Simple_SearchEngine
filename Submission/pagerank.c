@@ -1,7 +1,8 @@
 //Pagerank for Assignment 2 COMP1927 S1 2017
 //Finalising on 5/28/2017
 //Use to calculate Pagerank for a group of urls
-//By Hui Min Wang
+//Group Dragons001: Hui Min Wang, Alina, Henry
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +17,6 @@ void merge(int* array, int lo, int mid, int hi, double* PRarray);
 void mergesort(int* array, int lo, int hi, double* PRarray);
 void printPRFunction(double* PRarray, Graph g, int size, int* sortedArray);
 void pagerank(double d, double diffPR, int maxIterations);
-int less(double num1, double num2);
 
 int main(int argc, char * argv[]){
 
@@ -56,17 +56,18 @@ void pagerank(double d, double diffPR, int maxIterations){
         exit(0);
     }
 
-//The math part
+//The math part (NOTE: urls each have an allocated index, which you can find using indexArray in graph)
     while(p < maxIterations && diff >= diffPR){
         diff = 0;
-        for (i = 0; i < size; i++){				//i is pi
-            linkedToGiven(g, i, tempArray);		//an array of urls that link to i
-            linksIn = numberOfLinksTo(g, i);	//number of links to i
+        for (i = 0; i < size; i++){			//i is pi
+            linkedToGiven(g, i, tempArray);		//an array of index of urls that link to i
+            linksIn = numberOfLinksTo(g, i);	        //number of links to i
             for (j = 0 ; j < linksIn; j++){		// j is pj
-                linksFrom = numberOfLinksOut(g,tempArray[j]);  //get how many links go out of j
-				if( linksFrom != 0 && tempArray[j] != i ){			//add if not 0
-					sum = sum + prevPRArray[tempArray[j]]/linksFrom;
-				}
+                linksFrom = numberOfLinksOut(g,tempArray[j]);       //get how many links go out of j
+		if( linksFrom != 0 && tempArray[j] != i ){	    //add if not 0 or selfloop
+		    sum = sum + prevPRArray[tempArray[j]]/linksFrom;   //The sum part of the formula
+		    //pagerank of url connecting to i/links coming out of that url
+		}
             }
             assert(sum < 1);
             //Get PageRank!!! Finally!!!
@@ -82,14 +83,17 @@ void pagerank(double d, double diffPR, int maxIterations){
         }
     }
 
-    //initialise sorted array
+    //initialise sorted array [1, 2, 3...]
     int sorted[size];
     for (i = 0; i < size; i++){
         sorted[i] = i;
     }
 
+    //Sort PR
     mergesort(sorted, 0, size-1, currPRArray);
+    //Print PR in file
     printPRFunction(currPRArray, g, size, sorted);
+    //Free allocated memory
     disposeGraph(g);
 }
 
@@ -113,7 +117,9 @@ double abs2(double num){
     return ret;
 }
 
-//Mergesort code from lectures
+//modified mergesort code from lectures
+//only difference is it moves the index array as well
+//to keep track of which url corresponds to what pagerank
 void mergesort(int* array, int lo, int hi, double* PRarray){
 
     if(hi <= lo) return;
@@ -175,10 +181,10 @@ void printPRFunction(double* PRarray, Graph g, int size, int* sortedArray){
     int url = 0;
     FILE *fp;
     fp = fopen("pagerankList.txt", "w");
-    for (i = 0; i < size; i++){
-        url = urlGivenIndex(sortedArray[i], g);
+    for (i = 0; i < size; i++){ //prints url and PR
+        url = urlGivenIndex(sortedArray[i], g);  //sortedArray contains index of url
         fprintf(fp, "url%d, %d, ", url, numberOfLinksOut(g, sortedArray[i]));
-        fprintf(fp, "%.7f\n", PRarray[i]);
+        fprintf(fp, "%.7f\n", PRarray[i]);   //PR array conatins PR
     }
     fclose(fp);
 }

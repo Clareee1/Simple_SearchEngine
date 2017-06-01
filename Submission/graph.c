@@ -35,34 +35,34 @@ Graph createNewGraph(){
     //Obtain number of urls
     int size = getNumOfUrlFromFile("collection.txt");
 
-	if (size == 0){ //if there are no links in collection
-		return NULL;
-	}
+    if (size == 0){ //if there are no links in collection
+        return NULL;
+    }
 
-    //Obtains all urls and stores into Array
+    //Obtains all urls and stores into Array (index of array corresponds to url)
     int *index = getNameOfUrlFromFile("collection.txt", size);
 
     //Make space for graph
-  	Graph new = malloc(sizeof(GraphRep));
-  	assert(new != NULL);
+    Graph new = malloc(sizeof(GraphRep));
+    assert(new != NULL);
 
     //Initialise Stuff
-  	int i, j;
-  	new->nV = size;
-  	new->indexArray = index;
+    int i, j;
+    new->nV = size;
+    new->indexArray = index;
 
     //Make space for edges (the actual graph)
-  	new->edges = malloc((size) * sizeof(int *));
-  	assert(new->edges != NULL);
+    new->edges = malloc((size) * sizeof(int *));
+    assert(new->edges != NULL);
 
     //Initialise graph
-  	for (i = 0; i < size; i++) {
-  		  new->edges[i] = malloc((size) * sizeof(int));
-  		  assert(new->edges[i] != NULL);
-  		  for (j = 0; j < size; j++){
-  			    new->edges[i][j] = 0;
+    for (i = 0; i < size; i++) {
+  	new->edges[i] = malloc((size) * sizeof(int));
+  	assert(new->edges[i] != NULL);
+  	for (j = 0; j < size; j++){
+  	    new->edges[i][j] = 0;
         }
-  	}
+    }
 
     //The annoying node
     vlist *e = malloc(size * sizeof(struct vNode));
@@ -83,37 +83,38 @@ Graph createNewGraph(){
     char url[20];
     int tsize;
     int k = 0;
-	int dupli = 0;
+    int dupli = 0;
 
     //Making and putting stuff into the graph
-    for(i = 0; i < size; i++){
+    for(i = 0; i < size; i++){   //scanning url with index i
         //Gets url, its size and links
         sprintf(url, "url%d.txt", new -> indexArray[i]);
         tsize = getNumUrlFromFile(url);
-        if(tsize != 0){
-            int *tarray = malloc(sizeof(int) * (tsize+1)); 
+        if(tsize != 0){  //only if there are any urls in file
+            int *tarray = malloc(sizeof(int) * (tsize+1)); //temporary array
 	    assert(tarray != NULL);
-            getUrlFromFile(url, tarray);
-		    dupli = removeDuplicate(tarray, tsize, new->indexArray[i]);
+            getUrlFromFile(url, tarray);  //gets urls in the file
+            dupli = removeDuplicate(tarray, tsize, new->indexArray[i]);
             tsize = tsize - dupli;
             new -> lledges[i] -> numLinksOut = tsize;
 
         //Adds edge, and adds to node...
             k = 0;
             for(j = 0; j < tsize; j++){
-                k = findIndex(new, tarray[j], new -> nV);
-                if (k > -1 && k != i){
+                k = findIndex(new, tarray[j], new -> nV);   //finds the index of url found in file
+                if (k > -1 && k != i){    //adds to graph
                     new->edges[i][k] = 1;   // i links to k
-                    addTovList(new->lledges[k], i, size);
+                    addTovList(new->lledges[k], i, size);  //adds i to array containing
+		    //urls that link to k 
                 }
             }
             free(tarray);
-        } else if (tsize == 0){
-             new -> lledges[i] -> numLinksOut = tsize;
+        } else if (tsize == 0){    //else only update size
+            new -> lledges[i] -> numLinksOut = tsize;
         }
     }
     //showGraph(new);
-  	return new;
+    return new;
 
 }
 
@@ -188,7 +189,7 @@ int numberOfLinksOut(Graph g, int url){
 }
 
 
-//Add index to the node...
+//Add url to the node...
 void addTovList(vlist node, int from, int size){
     int i = 0;
     while(node -> linksToIt[i] != -1 && i < size){
@@ -196,7 +197,7 @@ void addTovList(vlist node, int from, int size){
     }
     node -> linksToIt[i] = from;
     node -> numLinksToIt++;
-    node -> linksToIt[i+1] = -1;
+    node -> linksToIt[i+1] = -1;  // indicates where the values (urls) stops
 }
 
 //If empty, returns 0, else 1.
@@ -208,40 +209,41 @@ int isGraphEmpty(Graph g){
     }
 }
 
+//Removes repeated urls and urls that self loop (urls that link to itself)
 int removeDuplicate(int* Array, int size, int curr){
-	int* temp = Array;
-	int count = 0;
+    int* temp = Array;   //to compare with
+    int count = 0;   //counts number of self loops and duplicates
     int i = 0;
     int j = 0;
 
-	while(i < size){
-		j = i + 1;
-        while (j < size){
-			if(temp[i] == Array[j] || Array[j-1] == curr || Array[j] == curr){
+    while(i < size){  //scans through array
+        j = i + 1;
+        while (j < size){    //compares each value to every value after it
+	    if(temp[i] == Array[j] || Array[j-1] == curr || Array[j] == curr){
                 int k;
-                if(Array[j-1] == curr){
+                if(Array[j-1] == curr){  //for self loop
                     k = j-1;
                 } else {
                     k = j;
                 }
-		count++;
+	        count++;
                 //printf("array is %d and curr is %d\n", Array[j], curr);
-                if(k != size){
-		    while(k <= size){
+                if(k != size){   //k is the index of the value we want to get rid of
+		    while(k <= size){   //remove k by shifting everything forward.
 		        Array[k] = Array[k+1];
-			k++;
+	                k++;
                     }
-		}
-                if(i != 0){
+                }
+                if(i != 0){  //to not miss any duplicates (for repeated dups)
                     i--;
                 }
-                j--;
-                size--;
-			}
-			j++;
-		}
-		i++;
-	}
-	return count;
+                j--;  //for repeated dups
+                size--;  //for repeated dups
+            }
+            j++;
+        }
+	i++;
+    }
+    return count;
 }
 
