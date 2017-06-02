@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Create a double array of size totalUrlCount to hold result
-    double *resultArray = newDoubleArray(combinedSize);
+    double *resultArray = newDoubleArray(totalUrlCount);
     if (resultArray == NULL) fatalError("Out of memory");
 
     int i, j;
