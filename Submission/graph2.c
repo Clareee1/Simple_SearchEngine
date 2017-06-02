@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "graph.h"
+#include "graph2.h"
 #include "parser.h"
 
 //A node
