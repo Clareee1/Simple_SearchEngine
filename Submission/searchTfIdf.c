@@ -54,10 +54,6 @@ int main(int argc, char *argv[]) {
     // int *tempArray = newIntArray(totalUrlCount);
     // if (tempArray == NULL) fatalError("Out of memory");
 
-    // Store the index for all urls
-    int *urlArray = getNameOfUrlFromFile("collection.txt", totalUrlCount);
-    if (urlArray == NULL) fatalError("Out of memory");
-
     // Make new array for the urls in the intersection of urls
     int *combined = createArray(argc - 1);
     int combinedSize = 0;
@@ -74,22 +70,22 @@ int main(int argc, char *argv[]) {
             free(combined);
             exit(EXIT_SUCCESS);
         }
-        int * urlArray = createArray(arraySize);
-        getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[counter], urlArray);
+        int * urlArrayIntersection = createArray(arraySize);
+        getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[counter], urlArrayIntersection);
 
         //adjust the combined array
         if (counter == 1) {
-            arrayCopy(combined, urlArray, arraySize);
+            arrayCopy(combined, urlArrayIntersection, arraySize);
             combinedSize = arraySize;
         } else {
             int * tmp = createArray(combinedSize);
             arrayCopy(tmp, combined, combinedSize);
-            combinedSize = arrayConjunction(combined, tmp, urlArray, combinedSize, arraySize);
+            combinedSize = arrayConjunction(combined, tmp, urlArrayIntersection, combinedSize, arraySize);
             free(tmp);
         }
 
         //free the array of urls of one keyword
-        free (urlArray);
+        free (urlArrayIntersection);
     }
 
     int i, j;
@@ -108,7 +104,7 @@ int main(int argc, char *argv[]) {
                 // Get term frequency
                 int tf = getKeywordCountFromUrl(buffer, argv[i]);
                 // Get index
-                int index = getIndexFromArray(urlArray, combined[j], totalUrlCount);
+                int index = getIndexFromArray(combined, combined[j], totalUrlCount);
                 // printf("tf: %d, index: %d, idtdf: %f\n", tf, index, calTfidfValue(calTfValue(tf), idf));
                 // Add this value to resultArray if valid
                 if (index != -1) resultArray[index] += calTfidfValue(calTfValue(tf), idf);
@@ -117,15 +113,14 @@ int main(int argc, char *argv[]) {
     }
 
     // Sort resultArray
-    getTopTen(resultArray, urlArray, totalUrlCount);
+    getTopTen(resultArray, combined, totalUrlCount);
     for (i = 0; i < 10; i++) {
         if (i >= totalUrlCount) break;
         if (resultArray[i] == 0) break;
-        printf("url%d, %0.6f\n", urlArray[i], resultArray[i]);
+        printf("url%d, %0.6f\n", combined[i], resultArray[i]);
     }
 
     free(combined);
-    free(urlArray);
     free(resultArray);
 
     return 0;
