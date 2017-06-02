@@ -1,7 +1,7 @@
 // Graph2.c
 // Modified version of Graph.c
 
-#define MAXLENGTH 200
+//#define MAXLENGTH 200
 
 #include <stdlib.h>
 #include <stdio.h>
