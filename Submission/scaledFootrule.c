@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Graph.h"
+#include "searchGraph.h"
 #include "parser.h"
 #include "list.h"
 
@@ -62,8 +62,8 @@ int main (int argc, char * argv[]) {
 		if (size == 0) {
 			free(combined);
 			freeArgv (argc, newArgv);
-			exit (EXIT_SUCCESS);	
-		} 
+			exit (EXIT_SUCCESS);
+		}
 		//create a new list
 		IntList L = newIntList();
 		insertData (L, combined, size, argc, newArgv);
