@@ -1,8 +1,8 @@
 //graph2.h
 //I  included comments  for the sake of my teammates >_<
 
-#ifndef GRAPH_H
-#define GRAPH_H
+#ifndef GRAPH2_H
+#define GRAPH2_H
 
 typedef struct GraphRep *Graph;
 
