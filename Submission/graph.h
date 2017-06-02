@@ -28,8 +28,6 @@ void linkedToGiven(Graph g, int url, int* array);
 //Gets the number of links that link to given url
 int numberOfLinksTo(Graph g, int url);
 
-//Returns 0 if empty
-int isGraphEmpty(Graph g);
 
 //Finds url given index
 int urlGivenIndex(int index, Graph g);
