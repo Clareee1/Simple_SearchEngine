@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include "parser.h"
 
 // How to use this program
@@ -30,16 +31,16 @@ void swapValue(double *resultArray, int index1, int index2);
 void getTopTen(double *resultArray, int *urlArray, int size);
 // Fatal error
 void fatalError(char *message);
+// Remove duplicates
+void keywordsWithoutDuplicates(char *argv[], int argc);
 
 int main(int argc, char *argv[]) {
     // There has to be at least one words
     if (argc <= 1) showUsage();
+    keywordsWithoutDuplicates(argv, argc);
 
-    // Get the number of keywords we have
-    int keywordCount = getNumOfKeywordFromFile("invertedIndex.txt");
     // Get the total number of urls we have in collection.txt for idf
     int totalUrlCount = getNumOfUrlFromFile("collection.txt");
-
     // Create a double array of size totalUrlCount to hold result
     double *resultArray = newDoubleArray(totalUrlCount);
     if (resultArray == NULL) fatalError("Out of memory");
@@ -52,21 +53,15 @@ int main(int argc, char *argv[]) {
     if (urlArray == NULL) fatalError("Out of memory");
 
     int i, j;
-    for (j = 0; j < urlWithKeyword; j++) {
-        for (i = 1; i < argc; i++) {
-            strlower(argv[i]);
-            if (!hasKeyword("invertedIndex.txt", argv[i])) {
-                free(resultArray);
-                free(tempArray);
-                free(urlArray);
-                exit(1);
-            } else {
-                // Repeat for each keyword
-                int urlWithKeyword = getNumOfUrlForKeywordFromFile("invertedIndex.txt", argv[i]);
-                getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[i], tempArray);
-                double idf = calIdfValue(urlWithKeyword, totalUrlCount);
-                // printf("c: %d, idf: %f\n", urlWithKeyword, idf);
-
+    for (i = 1; i < argc; i++) {
+        if (argv[i] != NULL) {
+            if (!hasKeyword("invertedIndex.txt", argv[i])) continue;
+            // Repeat for each keyword
+            int urlWithKeyword = getNumOfUrlForKeywordFromFile("invertedIndex.txt", argv[i]);
+            getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[i], tempArray);
+            double idf = calIdfValue(urlWithKeyword, totalUrlCount);
+            // printf("c: %d, idf: %f\n", urlWithKeyword, idf);
+            for (j = 0; j < urlWithKeyword; j++) {
                 // Repeat for each url
                 char buffer[64]; // Store url full name
                 sprintf(buffer, "url%d.txt", tempArray[j]);
@@ -96,6 +91,31 @@ int main(int argc, char *argv[]) {
     free(resultArray);
 
     return 0;
+}
+
+// Remove duplicates
+void keywordsWithoutDuplicates(char *argv[], int argc) {
+    if (argv == NULL) return;
+
+    int i, j, isDuplicate = 0;
+    for (i = 1; i < argc; i++) {
+        strlower(argv[i]);
+    }
+
+    for (i = 1; i < argc; i++) {
+        for (j = 1; j < i; j++) {
+            if (i == 1) continue;
+            if (strcmp(argv[i], argv[j]) == 0) {
+                isDuplicate = 1;
+                break;
+            }
+        }
+
+        if (isDuplicate) {
+            argv[i] = NULL;
+        }
+        isDuplicate = 0;
+    }
 }
 
 // Create an integer array
