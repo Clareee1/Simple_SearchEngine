@@ -36,7 +36,7 @@ Graph createNewGraph(){
     int size = getNumOfUrlFromFile("collection.txt");
 
     if (size == 0){ //if there are no links in collection
-        return NULL;
+        exit(1);
     }
 
     //Obtains all urls and stores into Array (index of array corresponds to url)
@@ -200,14 +200,6 @@ void addTovList(vlist node, int from, int size){
     node -> linksToIt[i+1] = -1;  // indicates where the values (urls) stops
 }
 
-//If empty, returns 0, else 1.
-int isGraphEmpty(Graph g){
-    if(g == NULL || g->nV == 0){
-        return 0;
-    } else {
-        return 1;
-    }
-}
 
 //Removes repeated urls and urls that self loop (urls that link to itself)
 int removeDuplicate(int* Array, int size, int curr){
