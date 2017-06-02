@@ -236,7 +236,7 @@ int removeDuplicate(int* Array, int size, int curr){
         }
         i++;
     }
-    /*
+    
     //ensure all self loops are counted
     i = 0;
     while(i < size){
@@ -252,7 +252,7 @@ int removeDuplicate(int* Array, int size, int curr){
             }
         }
         i++;
-    }*/
+    }
     return count;
 }
 
