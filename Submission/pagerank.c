@@ -52,8 +52,8 @@ void pagerank(double d, double diffPR, int maxIterations){
     double prevPRArray[size]; //previous pagerank
     initialiseArray(prevPRArray, size); //put 1/size for each
 
-    if(isGraphEmpty(g) == 0){
-        exit(0);
+    if(g == NULL){
+        exit(1);
     }
 
 //The math part (NOTE: urls each have an allocated index, which you can find using indexArray in graph)
