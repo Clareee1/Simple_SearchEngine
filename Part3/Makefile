@@ -1,15 +1,9 @@
 CC=gcc
-CFLAGS=-Wall -Werror -g
+FLAGS=-Wall -Werror -g
 
-bruteforce:
-	$(CC) $(CFLAGS) ArrayList.c BruteForce.c -o bruteforce
-	./bruteforce rankA.txt rankD.txt
-	./bruteforce rankB.txt rankC.txt
+all:
+	$(CC) $(FLAGS) *.c -o test
 test:
-	$(CC) $(CFLAGS) ArrayList.c testArrayList.c -o test
-permutation:
-	$(CC) $(CFLAGS) permutation.c -o permutation
-permutationR:
-	$(CC) $(CFLAGS) permutationR.c -o permutationR
+	$(CC) $(FLAGS) *.c -o test
 clean:
-	rm -f *.exe test permutation
+	rm -f *.exe
