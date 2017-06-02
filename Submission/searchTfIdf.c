@@ -47,15 +47,12 @@ int main(int argc, char *argv[]) {
 
     // Get the total number of urls we have in collection.txt for idf
     int totalUrlCount = getNumOfUrlFromFile("collection.txt");
-    // Create a double array of size totalUrlCount to hold result
-    double *resultArray = newDoubleArray(totalUrlCount);
-    if (resultArray == NULL) fatalError("Out of memory");
     // Create another temp array with same size to hold temp url
     // int *tempArray = newIntArray(totalUrlCount);
     // if (tempArray == NULL) fatalError("Out of memory");
 
     // Make new array for the urls in the intersection of urls
-    int *combined = createArray(argc - 1);
+    int *combined = createArray(100);
     int combinedSize = 0;
     int counter;
     for (counter = 1; counter < argc; counter++) {
@@ -70,23 +67,27 @@ int main(int argc, char *argv[]) {
             free(combined);
             exit(EXIT_SUCCESS);
         }
-        int * urlArrayIntersection = createArray(arraySize);
-        getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[counter], urlArrayIntersection);
+        int * urlArray = createArray(arraySize);
+        getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[counter], urlArray);
 
         //adjust the combined array
         if (counter == 1) {
-            arrayCopy(combined, urlArrayIntersection, arraySize);
+            arrayCopy(combined, urlArray, arraySize);
             combinedSize = arraySize;
         } else {
             int * tmp = createArray(combinedSize);
             arrayCopy(tmp, combined, combinedSize);
-            combinedSize = arrayConjunction(combined, tmp, urlArrayIntersection, combinedSize, arraySize);
+            combinedSize = arrayConjunction(combined, tmp, urlArray, combinedSize, arraySize);
             free(tmp);
         }
 
         //free the array of urls of one keyword
-        free (urlArrayIntersection);
+        free (urlArray);
     }
+
+    // Create a double array of size totalUrlCount to hold result
+    double *resultArray = newDoubleArray(combinedSize);
+    if (resultArray == NULL) fatalError("Out of memory");
 
     int i, j;
     for (i = 1; i < argc; i++) {
@@ -113,10 +114,10 @@ int main(int argc, char *argv[]) {
     }
 
     // Sort resultArray
-    getTopTen(resultArray, combined, totalUrlCount);
+    getTopTen(resultArray, combined, combinedSize);
     for (i = 0; i < 10; i++) {
         if (i >= totalUrlCount) break;
-        if (resultArray[i] == 0) break;
+        if (resultArray[i] < 0.000001) break;
         printf("url%d, %0.6f\n", combined[i], resultArray[i]);
     }
 
