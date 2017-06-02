@@ -41,21 +41,21 @@ typedef struct IntListNode * node;
 typedef struct IntListRep *IntList;
 
 // create a new empty IntList
-IntList newIntList();
+IntList newIntListP3();
 // create a new node
 node newIntListNode(double, int);
 // insert the data array inside a node
 void insertNode(node, int, double);
 // free up all space associated with list
-void freeIntList(IntList);
+void freeIntListP3(IntList);
 // display list as one integer per line on stdout
-void showIntList(IntList, int);
+void showIntListP3(IntList, int);
 // append one node to the end of a list
-void IntListInsert(IntList, node);
+void IntListInsertP3(IntList, node);
 // delete head of list
-void IntFirstDelete(IntList);
+void IntFirstDeleteP3(IntList);
 // return number of elements in a list
-int IntListLength(IntList);
+int IntListLengthP3(IntList);
 // to calculate the distance of a certain value by a certain position
 double addition (int value, int position, int size, IntList);
 // calculate the minimum distance of each position from array result to array original

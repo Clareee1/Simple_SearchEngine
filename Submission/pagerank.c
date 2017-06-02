@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "graph2.h"
+#include "graph.h"
 #include "parser.h"
 
 void initialiseArray(double* array, int size);

@@ -15,7 +15,7 @@ tdidf:
 	$(CC) $(CFLAGS) searchTfIdf.c graph.c BSTree.c IntList.c parser.c -lm -o tdidf
 	valgrind ./tdidf  mars  design
 part3:
-	$(CC) $(CFLAGS) scaledFootrule.c ArrayList.c graph.c BSTree.c IntList.c parser.c -o part3
+	$(CC) $(CFLAGS) scaledFootrule.c searchGraph.c BSTree.c list.c IntList.c parser.c -o part3
 	valgrind ./part3 rankA.txt rankD.txt
 clean:
 	rm -f *.exe

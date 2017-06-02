@@ -37,11 +37,9 @@ int main(int argc, char *argv[]) {
 
     // Get the number of keywords we have
     int keywordCount = getNumOfKeywordFromFile("invertedIndex.txt");
-    // Well, too many keywords than we have
-    if (argc - 1 > keywordCount) fatalError("Too many keywords");
-
     // Get the total number of urls we have in collection.txt for idf
     int totalUrlCount = getNumOfUrlFromFile("collection.txt");
+
     // Create a double array of size totalUrlCount to hold result
     double *resultArray = newDoubleArray(totalUrlCount);
     if (resultArray == NULL) fatalError("Out of memory");
@@ -54,25 +52,32 @@ int main(int argc, char *argv[]) {
     if (urlArray == NULL) fatalError("Out of memory");
 
     int i, j;
-    for (i = 1; i < argc; i++) {
-        strlower(argv[i]);
-        if (!hasKeyword("invertedIndex.txt", argv[i])) continue;
-        // Repeat for each keyword
-        int urlWithKeyword = getNumOfUrlForKeywordFromFile("invertedIndex.txt", argv[i]);
-        getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[i], tempArray);
-        double idf = calIdfValue(urlWithKeyword, totalUrlCount);
-        // printf("c: %d, idf: %f\n", urlWithKeyword, idf);
-        for (j = 0; j < urlWithKeyword; j++) {
-            // Repeat for each url
-            char buffer[64]; // Store url full name
-            sprintf(buffer, "url%d.txt", tempArray[j]);
-            // Get term frequency
-            int tf = getKeywordCountFromUrl(buffer, argv[i]);
-            // Get index
-            int index = getIndexFromArray(urlArray, tempArray[j], totalUrlCount);
-            // printf("tf: %d, index: %d, idtdf: %f\n", tf, index, calTfidfValue(calTfValue(tf), idf));
-            // Add this value to resultArray if valid
-            if (index != -1) resultArray[index] += calTfidfValue(calTfValue(tf), idf);
+    for (j = 0; j < urlWithKeyword; j++) {
+        for (i = 1; i < argc; i++) {
+            strlower(argv[i]);
+            if (!hasKeyword("invertedIndex.txt", argv[i])) {
+                free(resultArray);
+                free(tempArray);
+                free(urlArray);
+                exit(1);
+            } else {
+                // Repeat for each keyword
+                int urlWithKeyword = getNumOfUrlForKeywordFromFile("invertedIndex.txt", argv[i]);
+                getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[i], tempArray);
+                double idf = calIdfValue(urlWithKeyword, totalUrlCount);
+                // printf("c: %d, idf: %f\n", urlWithKeyword, idf);
+
+                // Repeat for each url
+                char buffer[64]; // Store url full name
+                sprintf(buffer, "url%d.txt", tempArray[j]);
+                // Get term frequency
+                int tf = getKeywordCountFromUrl(buffer, argv[i]);
+                // Get index
+                int index = getIndexFromArray(urlArray, tempArray[j], totalUrlCount);
+                // printf("tf: %d, index: %d, idtdf: %f\n", tf, index, calTfidfValue(calTfValue(tf), idf));
+                // Add this value to resultArray if valid
+                if (index != -1) resultArray[index] += calTfidfValue(calTfValue(tf), idf);
+            }
         }
     }
 

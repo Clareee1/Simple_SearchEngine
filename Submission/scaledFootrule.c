@@ -21,7 +21,7 @@
 #include <string.h>
 #include "searchGraph.h"
 #include "parser.h"
-#include "list.h"
+#include "IntList.h"
 
 #define BUFFER 64
 #define MAX_URL 100
@@ -88,7 +88,7 @@ int main (int argc, char * argv[]) {
 		printArray (minDistArray, size);
 
 		//free everything
-		freeIntList (L);
+		freeIntListP3 (L);
 		dropGraph(g);
 		free (combined);
 		free (minDistArray);
@@ -157,7 +157,7 @@ void insertData (IntList L, int * array, int size, int argc, char * argv[]) {
 			}
 		}
 		//insert node to list
-		IntListInsert(L, n);
+		IntListInsertP3(L, n);
 		//free mallocked memory
 		free(urlArray);
 	}

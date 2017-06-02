@@ -10,7 +10,7 @@
 // -int IntListOK(IntList L)
 // -void IntListPrint(FILE *outf, IntList L)
 // -void showIntList(FILE* fp, IntList L)
-// 
+//
 // Changed from doubly linked list to singly linked list
 // Changed the following functions:
 // -void freeIntList(IntList L) function
@@ -24,8 +24,8 @@
 // -double calculateMinDist (IntList L, int * original, int * result, int size);
 // -int * minimumPosition (IntList L, int * combined, int num);
 // Local:
-// -void mergesort(int* array, int lo, int hi, double* PRarray);
-// -void merge(int* array, int lo, int mid, int hi, double* PRarray);
+// -void mergesortP3(int* array, int lo, int hi, double* PRarray);
+// -void mergeP3(int* array, int lo, int mid, int hi, double* PRarray);
 
 
 #include <stdlib.h>
@@ -46,20 +46,20 @@ struct IntListNode {
 
 struct IntListRep {
 	// number of elements in list
-	int size;  
+	int size;
 	// node containing first value
 	struct IntListNode *first;
 };
 
 //--------------------------------------------------------------------------------------
 // the auxiliary function for mergesort (from Lecture)
-void mergesort(int* array, int lo, int hi, double* PRarray);
+void mergesortP3(int* array, int lo, int hi, double* PRarray);
 // ascending merge sort (From Lecture, modified by Hui Min Wang)
-void merge(int* array, int lo, int mid, int hi, double* PRarray);
+void mergeP3(int* array, int lo, int mid, int hi, double* PRarray);
 //--------------------------------------------------------------------------------------
 
 // create a new empty IntList
-IntList newIntList()
+IntList newIntListP3()
 {
 	struct IntListRep *L;
 	L = malloc(sizeof (struct IntListRep));
@@ -70,16 +70,16 @@ IntList newIntList()
 }
 
 // free up all space associated with list
-void freeIntList(IntList L)
+void freeIntListP3(IntList L)
 {
 	while (L->first != NULL) {
-		IntFirstDelete(L);
+		IntFirstDeleteP3(L);
 	}
 	free (L);
 }
 
 // display list as one integer per line on stdout
-void showIntList(IntList L, int num)
+void showIntListP3(IntList L, int num)
 {
 	assert(L != NULL);
 	struct IntListNode *curr;
@@ -117,7 +117,7 @@ void insertNode(node n, int index, double num)
 }
 
 // append one integer to the end of a list
-void IntListInsert(IntList L, node n)
+void IntListInsertP3(IntList L, node n)
 {
 	if (L->first == NULL)
 		L->first = n;
@@ -132,7 +132,7 @@ void IntListInsert(IntList L, node n)
 }
 
 // delete the head of the list
-void IntFirstDelete(IntList L)
+void IntFirstDeleteP3(IntList L)
 {
 	struct IntListNode *curr;
 	assert(L != NULL);
@@ -146,7 +146,7 @@ void IntFirstDelete(IntList L)
 }
 
 // return number of elements in a list
-int IntListLength(IntList L)
+int IntListLengthP3(IntList L)
 {
 	assert(L != NULL);
 	return L->size;
@@ -214,21 +214,21 @@ int * minimumPosition (IntList L, int * array, int num) {
 		dist[i] = dist[i]/ (double) count;
 	}
 	//sort the union array of urls and dist in an ascending order of distance
-	mergesort(array, 0, num-1, dist);
+	mergesortP3(array, 0, num-1, dist);
 	return array;
 }
 
-// the auxiliary function for mergesort (from Lecture)
-void mergesort(int* array, int lo, int hi, double* PRarray) {
+// the auxiliary function for mergesortP3 (from Lecture)
+void mergesortP3(int* array, int lo, int hi, double* PRarray) {
     if(hi <= lo) return;
     int mid = (lo + hi)/2;
-    mergesort(array, lo, mid, PRarray);
-    mergesort(array, mid+1, hi, PRarray);
-    merge(array, lo, mid, hi, PRarray);
+    mergesortP3(array, lo, mid, PRarray);
+    mergesortP3(array, mid+1, hi, PRarray);
+    mergeP3(array, lo, mid, hi, PRarray);
 }
 
-// ascending merge sort (From Lecture, modified by Hui Min Wang)
-void merge(int* array, int lo, int mid, int hi, double* PRarray) {
+// ascending mergeP3 sort (From Lecture, modified by Hui Min Wang)
+void mergeP3(int* array, int lo, int mid, int hi, double* PRarray) {
     int i, j, k, nitems = hi-lo+1;
     double* tmp = malloc(nitems*sizeof(double));
     int* tmp2 = malloc(nitems*sizeof(int));
