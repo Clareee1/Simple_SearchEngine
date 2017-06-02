@@ -30,10 +30,15 @@ int main (int argc, char * argv[]) {
 		for (counter = 1; counter < argc; counter++) {
 			normalise(argv[counter]);
 			if (hasKeyword ("invertedIndex.txt", argv[counter]) == 0) {
+				free(combined);
 				exit(EXIT_SUCCESS);
 			}
 			//get the array of url that contains the keyword
 			int arraySize = getNumOfUrlForKeywordFromFile("invertedIndex.txt", argv[counter]);
+			if (arraySize == 0) {
+				free(combined);
+				exit(EXIT_SUCCESS);	
+			}
 			int * urlArray = createArray (arraySize);
 			getNameOfUrlForKeywordFromFile("invertedIndex.txt", argv[counter], urlArray);
 
@@ -47,6 +52,7 @@ int main (int argc, char * argv[]) {
 				combinedSize = arrayConjunction (combined, tmp, urlArray, combinedSize, arraySize);
 				free(tmp);
 			}
+
 			//free the array of urls of one keyword
 			free (urlArray);
 		}
