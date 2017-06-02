@@ -65,8 +65,9 @@ void getUrlFromFile(char *name, int *urlArray) {
                 break;
             }
         }
+        fclose(fp);
     }
-    fclose(fp);
+
 }
 
 // Get number of links from collection.txt (Henry)
@@ -90,7 +91,6 @@ int getNumUrlFromFile(char *name) {
         fclose(fp);
         return urlCount;
     }
-    fclose(fp);
     return -1;
 }
 
@@ -114,8 +114,8 @@ void getTxtFromFile(char *name, Tree bst) {
                 TreeFindAndInsert(bst, buffer, url);
             } else if (sectionCount == 3) break; // Done
         }
+        fclose(fp);
     }
-    fclose(fp);
 }
 
 // Get name of links from collection.txt (Henry)
@@ -134,8 +134,8 @@ int *getNameOfUrlFromFile(char *name, int num) {
             fscanf(fp, "\nurl%d ", &currNum);
             nameArray[i] = currNum;
         }
+        fclose(fp);
     }
-    fclose(fp);
     return nameArray;
 }
 
@@ -150,8 +150,9 @@ int getNumOfUrlFromFile(char *name) {
         while (fscanf(fp, "\n %s ", buffer) == 1) {
             if (strstr(buffer, "url")) numOfUrl++;
         }
+        fclose(fp);
     }
-    fclose(fp);
+
     return numOfUrl;
 }
 
@@ -176,8 +177,9 @@ int getNumOfUrlForKeywordFromFile(char *name, char *keyword) {
                 break;
             }
         }
+        fclose(fp);
     }
-    fclose(fp);
+
     return count;
 }
 
@@ -203,8 +205,9 @@ void getNameOfUrlForKeywordFromFile(char *name, char *keyword, int *array) {
                 break;
             }
         }
+        fclose(fp);
     }
-    fclose(fp);
+
 }
 
 // Get number of keywords from invertedIndex.txt (Part 2) (Henry)
@@ -219,8 +222,9 @@ int getNumOfKeywordFromFile(char *name) {
         while ((c = getc(fp)) != EOF) {
             if (c == '\n') count++;
         }
+        fclose(fp);
     }
-    fclose(fp);
+
     return count;
 }
 
@@ -237,8 +241,9 @@ int getKeywordCountFromUrl(char *name, char *keyword) {
             // We found that word, YEAH!
             if (strcmp(buffer, keyword) == 0) count++;
         }
+        fclose(fp);
     }
-    fclose(fp);
+
     return count;
 }
 
@@ -258,8 +263,9 @@ int hasKeyword(char *name, char *keyword) {
                 break;
             }
         }
+        fclose(fp);
     }
-    fclose(fp);
+
     return count;
 }
 
