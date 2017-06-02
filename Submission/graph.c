@@ -236,6 +236,22 @@ int removeDuplicate(int* Array, int size, int curr){
         }
         i++;
     }
+    //ensure all self loops are counted
+    i = 0;
+    while(i < size){
+        if(Array[i] == curr){
+            count++;
+            int k = i;
+            while(k <= size){
+                Array[k] = Array[k+1];
+                k++;
+            }
+            if ( i != 0){
+	        i--;
+            }
+        }
+        i++;
+    }
     return count;
 }
 
