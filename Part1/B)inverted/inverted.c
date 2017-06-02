@@ -12,6 +12,7 @@ int main (int argc, char * argv[]) {
 	if (argc == 1) {
 		//create an array of all url from collection.txt
 		int numUrl = getNumOfUrlFromFile ("collection.txt");
+		if (numUrl == 0) exit (EXIT_SUCCESS);
 		int * urlArray = getNameOfUrlFromFile ("collection.txt", numUrl);
 		//create a new tree called bst
 		Tree bst = newTree();
@@ -32,13 +33,14 @@ int main (int argc, char * argv[]) {
 		//check if the memory is enough
 		if (fp == NULL) {
 			fprintf(stderr, "File couldn't be opened.\n");
-			exit(EXIT_FAILURE);
+			exit(EXIT_SUCCESS);
 		}
-		free (urlArray);
 		//print the tree in the file
 		showTree(fp, bst);
 		//close the file
 		fclose (fp);
+		//free the array of urls
+		free (urlArray);
 		//free the tree
 		dropTree(bst);
 	}
